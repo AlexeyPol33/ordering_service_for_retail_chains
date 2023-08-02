@@ -122,7 +122,7 @@ class ProductInfo(models.Model):
     name = models.CharField(max_length=100,verbose_name='Название')
     quantity = models.FloatField(verbose_name='Количество',validators=[MinValueValidator(0)])
     price = models.FloatField(verbose_name='Цена',validators=[MinValueValidator(0)])
-    price_rrc = models.CharField(max_length=3,verbose_name='Валюта')
+    price_rrc = models.FloatField(verbose_name='разрешенная розничная цена без НДС ')
 
 class Parameter(models.Model):
     name = models.CharField(max_length=100,verbose_name='Название',unique = True)
@@ -136,9 +136,9 @@ class Parameter(models.Model):
         return self.name
 
 class ProductParameter(models.Model):
-    Product_info = models.ForeignKey(ProductInfo,on_delete=models.CASCADE,verbose_name='Информация о продукте')
+    product_info = models.ForeignKey(ProductInfo,on_delete=models.CASCADE,verbose_name='Информация о продукте')
     parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE, verbose_name='Параметер')
-    value = models.FloatField(verbose_name='Значение')
+    value = models.TextField(verbose_name='Значение')
 
 
 class Order(models.Model):

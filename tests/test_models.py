@@ -8,7 +8,13 @@ import backend.settings as settings
 from model_bakery import baker
 from app.models import Shop, Category,Product,\
 ProductInfo,Parameter,ProductParameter,Order,\
-OrderItem,Contact
+OrderItem,Contact, User
+
+@pytest.fixture
+def user_factory():
+    def factory(**kwargs):
+        return baker.make('User',**kwargs)
+    return factory
 
 @pytest.fixture
 def shop_factory():
@@ -63,6 +69,21 @@ def contact_item_factory():
     def factory(**kwargs):
         return baker.make('Contact',**kwargs)
     return factory
+
+class TestUser:
+
+    @pytest.fixture
+    def correct_test_data(self,user_factory):
+        users = []
+        for i in range(1,4):
+            user = user_factory(username=f'username{i}',
+                                password=f'password{i}',
+                                email=f'test@email{i}.com',
+                                company=f'company{i}',
+                                position=f'position{i}')
+            users.append(user)
+        return users
+
 
 @pytest.mark.django_db
 class TestShop:

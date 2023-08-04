@@ -203,7 +203,7 @@ class TestProductInfo:
                                                 name=f'piname{i}',
                                                 quantity=i,
                                                 price=i,
-                                                price_rrc='rub')
+                                                price_rrc=i)
             products_info.append(product_info)
         return products_info
 

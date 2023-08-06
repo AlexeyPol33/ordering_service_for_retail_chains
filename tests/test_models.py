@@ -6,6 +6,7 @@ from django.test import override_settings, modify_settings
 from rest_framework import serializers
 import backend.settings as settings
 from model_bakery import baker
+from django.contrib.auth.hashers import check_password
 from app.models import Shop, Category,Product,\
 ProductInfo,Parameter,ProductParameter,Order,\
 OrderItem,Contact, User
@@ -84,7 +85,6 @@ class TestUser:
             users.append(user)
         return users
 
-
 @pytest.mark.django_db
 class TestShop:
 
@@ -92,9 +92,11 @@ class TestShop:
     def correct_test_data(self,shop_factory):
         shops = []
         for i in range(1,4):
-            shops.append(shop_factory(name = f'testname{i}',
-                            url = f'testurl{i}',
-                            filename = f'testfilename{i}'))
+            shops.append(shop_factory(
+                id = i,
+                name = f'testname{i}',
+                url = f'testurl{i}',
+                filename = f'testfilename{i}'))
         return shops
 
     def test_create_shop(self,correct_test_data):

@@ -90,7 +90,7 @@ class Shop(models.Model):
     
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название', unique=True)
-    shops = models.ManyToManyField(Shop, through='Shops_Categories',blank=True)
+    shops = models.ManyToManyField(Shop, through='ShopsCategories',blank=True)
 
     class Meta:
         verbose_name = 'Категория'
@@ -100,8 +100,8 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.name
     
-class Shops_Categories(models.Model):
-    categorys = models.ForeignKey(Category, on_delete=models.CASCADE)
+class ShopsCategories(models.Model):
+    categories = models.ForeignKey(Category, on_delete=models.CASCADE)
     shops = models.ForeignKey(Shop,on_delete=models.CASCADE)
 
 class Product(models.Model):

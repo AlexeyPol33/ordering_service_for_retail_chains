@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import validators
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from app.models import Shop,ShopsCategories,Category,Product,\
 ProductInfo,Parameter,ProductParameter,Order,\
 OrderItem,Contact, User
@@ -59,7 +60,25 @@ class ContactSerializer(ModelSerializer):
         model = Contact
         fields = ['id','type','user','value']
 
+class ObtainTokenSerializer(TokenObtainPairSerializer):
+    def validate(self,attrs):
+        data = super().validate(attrs)
+
+        user = self.user
+        data['user_id'] = user.id
+        data['email'] = user.email
+        return data
+
 class UserSerializer(ModelSerializer):
     class Meta:
         model =  User
         fields = ['id','username','password','email','company','position']
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

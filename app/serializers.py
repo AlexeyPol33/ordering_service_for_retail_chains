@@ -61,13 +61,11 @@ class ContactSerializer(ModelSerializer):
         fields = ['id','type','user','value']
 
 class ObtainTokenSerializer(TokenObtainPairSerializer):
-    def validate(self,attrs):
-        data = super().validate(attrs)
-
-        user = self.user
-        data['user_id'] = user.id
-        data['email'] = user.email
-        return data
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        return token
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -80,5 +78,6 @@ class UserSerializer(ModelSerializer):
             email=validated_data['email']
         )
         user.set_password(validated_data['password'])
+        user.is_active = True
         user.save()
         return user

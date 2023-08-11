@@ -8,13 +8,22 @@ ProductInfo,Parameter,ProductParameter,Order,\
 OrderItem,Contact, User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.mail import send_mail
+
+from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
+from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission
 from app.serializers import ShopSerializer, ShopsCategoriesSerializer,\
 CategorySerializer, ProductSerializer, ProductInfoSerializer,\
 ParameterSerializer, ProductParameterSerializer, OrderSerializer,\
 OrderItemSerializer, ContactSerializer, UserSerializer, ObtainTokenSerializer
 
+def test_send_email():
+    subject = 'Тест почтовой службы'
+    message = 'Проверка работы почтовой службы, тестовое сообщение'
+    from_email = 'your_email@example.com'
+    recipient_list = ['recipient@example.com']
+    send_mail(subject, message, from_email, recipient_list,fail_silently=False)
 
-# Create your views here.
 def home (request):
     return HttpResponse('Home page')
 
@@ -46,6 +55,16 @@ class UserViewSet(ModelViewSet):
             serializer.save()
             return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [AllowAny]
+        if self.action in ['update', 'partial_update','destroy','retrieve','list']:
+            permission_classes = [isAccountOwnerPermission|IsAdminUser]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
         
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()

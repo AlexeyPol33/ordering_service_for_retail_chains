@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'app',
 ]
 
@@ -111,6 +112,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'app.User'
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend', 
+    'django.contrib.auth.backends.RemoteUserBackend', 
+    'django.contrib.auth.backends.AllowAllUsersRemoteUserBackend']
+
+SIMPLE_JWT = {
+
+  "TOKEN_OBTAIN_SERIALIZER": "app.serializers.ObtainTokenSerializer",
+
+}
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -137,9 +148,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        
     ],
     'DEFAULT_PAGINATION_CLASS':
     'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100
 }
+
+EMAIL_BACKEND = getenv('EMAIL_BACKEND','django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = getenv('EMAIL_HOST','localhost')
+EMAIL_PORT = getenv('EMAIL_PORT',25)
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER','default')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD','default')
+EMAIL_USE_TLS = getenv('EMAIL_USE_TLS',True)

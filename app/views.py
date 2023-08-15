@@ -9,7 +9,7 @@ OrderItem,Contact, User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
-
+from os import getenv
 from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
 from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission
 from app.serializers import ShopSerializer, ShopsCategoriesSerializer,\
@@ -49,12 +49,6 @@ class RefreshTokenView(APIView):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    def post(self,request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def get_permissions(self):
         if self.action == 'create':
@@ -69,6 +63,7 @@ class UserViewSet(ModelViewSet):
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
+
 
 class ShopsCategoriesViewSet(ModelViewSet):
     queryset = ShopsCategories.objects.all()
@@ -101,6 +96,17 @@ class OrderViewSet(ModelViewSet):
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [IsAuthenticated]
+        if self.action in ['update', 'partial_update','destroy','retrieve','list']:
+            permission_classes = [IsAdminUser]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
 
 class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all()

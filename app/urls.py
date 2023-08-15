@@ -15,7 +15,7 @@ router.register('product',ProductViewSet)
 router.register('productInfo',ProductInfoViewSet)
 router.register('parameter',ParameterViewSet)
 router.register('productparameter',ProductParameterViewSet)
-router.register('Order',OrderViewSet)
+router.register('order',OrderViewSet)
 router.register('orderitem',OrderItemViewSet)
 router.register('contact',ContactViewSet)
 

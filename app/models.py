@@ -107,6 +107,7 @@ class ShopsCategories(models.Model):
 class Product(models.Model):
     category = models.ForeignKey(Category,verbose_name='Категория', null=True, blank=True,on_delete=models.CASCADE)
     name = models.CharField(max_length=100,verbose_name='Название')
+    
 
     class Meta:
         verbose_name = 'Продукт'
@@ -117,7 +118,7 @@ class Product(models.Model):
         return self.name
     
 class ProductInfo(models.Model):
-    product = models.ForeignKey(Product,verbose_name='Продукт',on_delete=models.CASCADE)
+    product = models.OneToOneField(Product,verbose_name='Продукт',on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop,verbose_name='Магазин', on_delete=models.CASCADE)
     name = models.CharField(max_length=100,verbose_name='Название')
     quantity = models.FloatField(verbose_name='Количество',validators=[MinValueValidator(0)])
@@ -160,7 +161,7 @@ class Order(models.Model):
     status = models.CharField(choices=OrderStatusChoice.choices,
                                 default=OrderStatusChoice.NEW,
                                 verbose_name='Статус')
-    
+     
 class OrderItem(models.Model):
     order = models.ForeignKey(Order,verbose_name='Заказ',on_delete=models.CASCADE)
     product = models.ForeignKey(Product,verbose_name='Продукт',on_delete=models.CASCADE)

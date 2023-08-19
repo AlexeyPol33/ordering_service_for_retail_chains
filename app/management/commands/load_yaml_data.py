@@ -9,10 +9,7 @@ import os
 def db_dump(data:dict,filename:str) -> None:
 
     shop = Shop()
-    category = Category()
-    product = Product()
-    product_info = ProductInfo() 
-    product_parameter = ProductParameter()
+   
 
     shop.name = data['shop']
     #shop.url = ''
@@ -20,15 +17,19 @@ def db_dump(data:dict,filename:str) -> None:
     shop.save()
 
     for c in data['categories']:
+        category = Category()
         category.id = c['id']
         category.name = c['name']
         category.shops == shop
         category.save()
 
     for g in data['goods']:
+        product = Product()
+        product.id = g['id']
         product.name = g['name']
         product.category = Category.objects.get(id=g['category'])
         product.save()
+        product_info = ProductInfo() 
         product_info.product = product
         product_info.shop = shop
         product_info.name = g['name']
@@ -41,7 +42,7 @@ def db_dump(data:dict,filename:str) -> None:
             parameter = Parameter.objects.get_or_create(
                 name = p
             )
-            
+            product_parameter = ProductParameter()
             product_parameter.product_info = product_info
             product_parameter.parameter = parameter[0]
             product_parameter.value = g['parameters'][p]

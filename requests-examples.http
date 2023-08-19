@@ -1,0 +1,74 @@
+@baseUrl = http://127.0.0.1:8000/api
+
+#Регистрация
+POST {{baseUrl}}/user/
+Content-Type: application/json
+
+{
+    "username":"username",
+    "password":"password",
+    "email":"test@email.com",
+    "company":"company",
+    "position":"position"
+}
+
+###
+
+#Аутентификация
+POST {{baseUrl}}/token/
+Content-Type: application/json
+
+{
+    "email":"test@email.com",
+    "password":"password"
+}
+
+###
+
+#Получить пользователя
+GET {{baseUrl}}/user/1/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDY1NzA0LCJpYXQiOjE2OTI0NjU0MDQsImp0aSI6Ijk1MjRmYTlhN2Y1MDRkMjFhNmZmMWIwNDQxMTA2ODU1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.9Udg5954dveFT-wgK-l8D-PG1OgFrxq-spIBaZBwQKc
+
+###
+
+#Получить список продуктов
+get {{baseUrl}}/product/
+Content-Type: application/json
+
+###
+
+# Получить определенный продукт
+GET {{baseUrl}}/product/4216292
+
+###
+
+#Получить информацию о продукте
+GET {{baseUrl}}/productinfo/4216292
+
+###
+
+#добавить товар в корзину
+POST {{baseUrl}}/orderitem/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDY1NzA0LCJpYXQiOjE2OTI0NjU0MDQsImp0aSI6Ijk1MjRmYTlhN2Y1MDRkMjFhNmZmMWIwNDQxMTA2ODU1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.9Udg5954dveFT-wgK-l8D-PG1OgFrxq-spIBaZBwQKc
+Content-Type: application/json
+
+{
+    "product":"4216292",
+    "quantity":2
+}
+
+###
+POST {{baseUrl}}/orderitem/
+Authorization: Bearer 
+Content-Type: application/json
+
+{
+    "product":"4216313",
+    "quantity":3
+}
+
+###
+# Просмотр корзины
+GET {{baseUrl}}/orderitem/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDY1NzA0LCJpYXQiOjE2OTI0NjU0MDQsImp0aSI6Ijk1MjRmYTlhN2Y1MDRkMjFhNmZmMWIwNDQxMTA2ODU1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.9Udg5954dveFT-wgK-l8D-PG1OgFrxq-spIBaZBwQKc

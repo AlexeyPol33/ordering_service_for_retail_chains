@@ -10,8 +10,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from os import getenv
+from django.http import HttpResponseNotAllowed,HttpResponseNotFound,HttpResponseBadRequest
 from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
-from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission
+from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission,\
+isOrderOwnerPermission
 from app.serializers import ShopSerializer, ShopsCategoriesSerializer,\
 CategorySerializer, ProductSerializer, ProductInfoSerializer,\
 ParameterSerializer, ProductParameterSerializer, OrderSerializer,\
@@ -27,6 +29,7 @@ def test_send_email():
 def home (request):
     return HttpResponse('Home page')
 
+# аутентификация и управление профелем
 class ObtainTokenView(TokenObtainPairView):
     serializer_class = ObtainTokenSerializer
 
@@ -51,18 +54,25 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action in ['create']:
             permission_classes = [AllowAny]
-        if self.action in ['update', 'partial_update','destroy','retrieve','list']:
+        elif self.action in ['update', 'partial_update','destroy','retrieve',]:
             permission_classes = [isAccountOwnerPermission|IsAdminUser]
+        elif self.action in ['list']:
+            permission_classes = [IsAdminUser]
         else:
             return []
         return [permission() for permission in permission_classes]
 
+class ContactViewSet(ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
         
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
+    def get_permissions(self):
+        return super().get_permissions()
 
 
 class ShopsCategoriesViewSet(ModelViewSet):
@@ -93,6 +103,15 @@ class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [IsAuthenticated]
+        if self.action in ['update', 'partial_update','destroy','retrieve','list']:
+            permission_classes = [IsAdminUser|isOrderOwnerPermission]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
@@ -102,12 +121,48 @@ class OrderItemViewSet(ModelViewSet):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
         if self.action in ['update', 'partial_update','destroy','retrieve','list']:
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsAdminUser|isOrderOwnerPermission]
         else:
             return []
         return [permission() for permission in permission_classes]
 
+class OrderConfirmation(APIView):
+    def post(self,request):
+        try:
+            user = request.user
+        except:
+            return HttpResponseBadRequest('Authorization error')
+        try:
+            contact = Contact.objects.get(user=user)
+            contact_bad_field = []
+            if not contact.phone:
+                contact_bad_field.append('phone')
+            if not contact.country:
+                contact_bad_field.append('country')
+            if not contact.region:
+                contact_bad_field.append('region')
+            if not contact.locality:
+                contact_bad_field.append('locality')
+            if not contact.street:
+                contact_bad_field.append('street')
+            if not contact.house:
+                contact_bad_field.append('house')
+            if contact_bad_field:
+                return HttpResponseBadRequest(f'To confirm the order,\
+                                               you need to fill in the following\
+                                               contact fields:{contact_bad_field}')
+        except:
+            return HttpResponseBadRequest('contact error')
+        try:
+            orders = Order.objects.filter(
+                user=user,
+                status=Order.OrderStatusChoice.NEW
+                )
+        except:
+            return HttpResponseNotFound('Orders not found')
+        for order in orders:
+            order.status = Order.OrderStatusChoice.CONFIRMED
+            order.save()
+        return Response('All orders have\
+                         changed their status to confirmed')
 
-class ContactViewSet(ModelViewSet):
-    queryset = Contact.objects.all()
-    serializer_class = ContactSerializer

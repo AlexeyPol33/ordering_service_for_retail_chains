@@ -171,6 +171,5 @@ class TestBasket():
         assert response['id'] == 1
         assert response['order'] == 1
         assert response['product'] == 1
-        assert response['shop'] == 1
         assert response ['quantity'] == 2
 

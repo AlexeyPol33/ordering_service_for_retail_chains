@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MinValueValidator
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext_lazy as _
 
 class UserTypeChoices(models.TextChoices):
@@ -105,9 +106,9 @@ class ShopsCategories(models.Model):
     shops = models.ForeignKey(Shop,on_delete=models.CASCADE)
 
 class Product(models.Model):
+
     category = models.ForeignKey(Category,verbose_name='Категория', null=True, blank=True,on_delete=models.CASCADE)
     name = models.CharField(max_length=100,verbose_name='Название')
-    
 
     class Meta:
         verbose_name = 'Продукт'
@@ -124,6 +125,11 @@ class ProductInfo(models.Model):
     quantity = models.FloatField(verbose_name='Количество',validators=[MinValueValidator(0)])
     price = models.FloatField(verbose_name='Цена',validators=[MinValueValidator(0)])
     price_rrc = models.FloatField(verbose_name='разрешенная розничная цена без НДС ')
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.pk = self.product.pk
+        super(ProductInfo, self).save(*args, **kwargs)
 
 class Parameter(models.Model):
     name = models.CharField(max_length=100,verbose_name='Название',unique = True)
@@ -157,6 +163,7 @@ class Order(models.Model):
         verbose_name_plural = 'Список заказов'
 
     user = models.ForeignKey(User, verbose_name='Пользователь',on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop,verbose_name='Магазин',on_delete=models.CASCADE)
     dt = models.DateTimeField(auto_now_add = True, verbose_name='Дата создания')
     status = models.CharField(choices=OrderStatusChoice.choices,
                                 default=OrderStatusChoice.NEW,
@@ -165,13 +172,18 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order,verbose_name='Заказ',on_delete=models.CASCADE)
     product = models.ForeignKey(Product,verbose_name='Продукт',on_delete=models.CASCADE)
-    shop = models.ForeignKey(Shop,verbose_name='Магазин',on_delete=models.CASCADE)
     quantity = models.FloatField(validators=[MinValueValidator(0)], verbose_name='Количество')
 
 class Contact(models.Model):
-    type = models.CharField(max_length=100, verbose_name='Тип')
-    user = models.ForeignKey(User,verbose_name='Пользователь',on_delete=models.CASCADE)
-    value = models.CharField(max_length=100, verbose_name='значение')
+
+    user = models.OneToOneField(User,verbose_name='Пользователь',on_delete=models.CASCADE)
+    phone = PhoneNumberField(null=True,blank=True)
+    country = models.CharField(max_length=20,verbose_name='страна',null=True, blank=True)
+    region = models.CharField(max_length=20,verbose_name='регион',null=True, blank=True)
+    locality = models.CharField(max_length=50,verbose_name='населенный пункт',null=True, blank=True)
+    street = models.CharField(max_length=50,verbose_name='улица',null=True, blank=True)
+    house = models.CharField(max_length=50,verbose_name='дом',null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'Контакт'

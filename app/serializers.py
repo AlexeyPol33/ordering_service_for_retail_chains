@@ -27,8 +27,7 @@ class ShopsCategoriesSerializer:
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id','category',' name']
-
+        fields = ['id','category','name']
 
 class ProductInfoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,52 +49,42 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id','user','dt','status']
 
-
-
-
-
-
 class OrderItemSerializer(serializers.ModelSerializer): #TODO добавить валидацию количиства товара
     class Meta:
         model = OrderItem
-        fields = ['id','order','product','shop','quantity']
+        fields = ['id','order','product','quantity']
 
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all(), required=False)
-    shop = serializers.PrimaryKeyRelatedField(queryset=Shop.objects.all(), required=False)
 
     def create(self, validated_data):
 
         user = self.context['request'].user
         try:
-            order = Order.objects.get(
-                user=user,
-                status=Order.OrderStatusChoice.NEW
-                )
-        except Order.DoesNotExist:
-            order = Order.objects.create(
-                user=user,
-                status=Order.OrderStatusChoice.NEW
-                )
-            order.save()
-        
-        try:
             product = validated_data['product']
             shop = ProductInfo.objects.get(product=product).shop
         except Product.DoesNotExist:
             raise serializers.ValidationError('Продукт не найден.')
+
+        try:
+            order = Order.objects.get(
+                user=user,
+                status=Order.OrderStatusChoice.NEW,
+                shop = shop
+                )
+        except Order.DoesNotExist:
+            order = Order.objects.create(
+                user=user,
+                status=Order.OrderStatusChoice.NEW,
+                shop = shop
+                )
+            order.save()
         
         validated_data['product'] = product
-        validated_data['shop'] = shop
         validated_data['order'] = order
         
         orderitem = OrderItem.objects.create(**validated_data)
         orderitem.save()
         return orderitem
-    
-
-
-
-
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
@@ -113,7 +102,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model =  User
         fields = ['id','username','password','email','company','position']
-
     def create(self, validated_data):
         user = User.objects.create(
 
@@ -123,10 +111,12 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         send_mail(
             subject = 'Подтвердите регистрацию',
-            message = 'Для подтверждения регистрацииперейдите по ссылке:',
+            message = 'Для подтверждения регистрации перейдите по ссылке:',
             from_email = 'your_email@example.com', 
             recipient_list = [user.email],
             fail_silently=False)
         user.is_active = True
         user.save()
+        contact = Contact.objects.create(user=user)
+        contact.save()
         return user

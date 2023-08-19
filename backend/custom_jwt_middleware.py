@@ -2,6 +2,8 @@ import jwt
 from django.conf import settings
 from app.models import User
 from rest_framework import exceptions
+from rest_framework.response import Response
+from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
 
 class CustomJWTMiddleware:
     def __init__(self, get_response):
@@ -18,11 +20,14 @@ class CustomJWTMiddleware:
                 user = User.objects.get(pk=user_id)
                 request.user = user
             except jwt.ExpiredSignatureError:
-                raise exceptions.AuthenticationFailed('Token has expired')
+                request.auth_failed = 'Token has expired'
             except jwt.DecodeError:
-                raise exceptions.AuthenticationFailed('Token is invalid')
+                request.auth_failed = 'Token is invalid'
             except User.DoesNotExist:
-                raise exceptions.AuthenticationFailed('No such user')
+                request.auth_failed = 'No such user'
+            except Exception as e:
+                request.auth_failed ='invalid authorization format'
+            
 
         response = self.get_response(request)
         return response

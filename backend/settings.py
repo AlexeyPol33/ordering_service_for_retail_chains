@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'phonenumber_field',
     'app',
+    
+    
 ]
 
 MIDDLEWARE = [
@@ -54,7 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'backend.custom_jwt_middleware.CustomJWTMiddleware'
+    'backend.custom_jwt_middleware.CustomJWTMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -119,8 +122,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.AllowAllUsersRemoteUserBackend']
 
 SIMPLE_JWT = {
-
-  "TOKEN_OBTAIN_SERIALIZER": "app.serializers.ObtainTokenSerializer",
+    
+    'TOKEN_OBTAIN_SERIALIZER': 'app.serializers.ObtainTokenSerializer',
 
 }
 # Internationalization

@@ -83,7 +83,14 @@ class Command(BaseCommand):
         
     def add_arguments(self, parser):
         parser.add_argument(
-        '-p',
-        '--path',
-        type=str,
-        help='Задает путь')
+            '-p',
+            '--path',
+            type=str,
+            help='Задает путь'
+            )
+        parser.add_argument(
+            '-u',
+            '--user',
+            type=str,
+            help='Задает владельца магазина'
+        )

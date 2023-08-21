@@ -7,11 +7,16 @@ from app.models import Shop,ShopsCategories,Category,Product,\
 ProductInfo,Parameter,ProductParameter,Order,\
 OrderItem,Contact, User
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.sites.shortcuts import get_current_site
 from rest_framework_simplejwt.tokens import RefreshToken
+from yaml_data_dump import db_dump
 from django.core.mail import send_mail
+from django.http import HttpRequest
 from os import getenv
+import yaml
 from django.http import HttpResponseNotAllowed,HttpResponseNotFound,HttpResponseBadRequest
 from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
+from rest_framework.authentication import BasicAuthentication
 from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission,\
 isOrderOwnerPermission
 from app.serializers import ShopSerializer, ShopsCategoriesSerializer,\
@@ -29,30 +34,12 @@ def test_send_email():
 def home (request):
     return HttpResponse('Home page')
 
-# аутентификация и управление профелем
-class ObtainTokenView(TokenObtainPairView):
-    serializer_class = ObtainTokenSerializer
-
-class RefreshTokenView(APIView):
-    def post(self,request):
-        refresh_token = request.data.get('refresh')
-        if not refresh_token:
-            return Response({'error': 'No refresh token provided'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        refresh = RefreshToken(refresh_token)
-
-        try:
-            access_token = str(refresh.access_token)
-        except:
-            return Response({'error': 'Invalid refresh token'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        return Response({'access': access_token})
-
+# аутентификация и управление профилем
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
+
     def get_permissions(self):
         if self.action in ['create']:
             permission_classes = [AllowAny]
@@ -67,38 +54,170 @@ class UserViewSet(ModelViewSet):
 class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
-        
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            return []
+        elif self.action in ['update', 'partial_update','destroy','retrieve',]:
+            permission_classes = [isAccountOwnerPermission|IsAdminUser]
+        elif self.action in ['list']:
+            permission_classes = [IsAdminUser]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
+#Управление магазином и продуктами
+
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
+    
+    
     def get_permissions(self):
-        return super().get_permissions()
+        if self.action in ['create']:
+            permission_classes = [IsAdminUser]
+        elif self.action in ['update', 'partial_update','destroy']:
+            permission_classes = [IsShopOwnerPermission|IsAdminUser]
+        elif self.action in ['list','retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
 
+class MakeShopOwner(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAdminUser]
+
+    def patch(self,request):
+        pass
+
+class PartnerUpdate(APIView):
+
+    def post(self,request):
+
+        try:
+            user = request.user
+            if user.is_anonymous:
+                return HttpResponse('Authorization error',status=401)
+        except:
+            return HttpResponse('Authorization error',status=401)
+        
+        try:
+            if user.position != User.UserPositionChoices.SHOP_OWNER:
+                return HttpResponse('user is not shop owner',status=403)
+            shop = user.company
+        except:
+            return HttpResponse('Forbidden',status=403)
+
+        uploaded_file = ''
+        if 'file' in request.FILES:
+            uploaded_file = request.FILES['file']
+        else:
+            return HttpResponse('file not provided',status=400)
+        try:
+            file_content = uploaded_file.read().decode('utf-8')
+            yaml_data = yaml.safe_load(file_content)
+        except yaml.YAMLError as e:
+            return HttpResponse(f'Error reading yaml file: {e}',status=400)
+        
+        try:
+            db_dump(yaml_data,None,shop=shop)
+        except:
+            return HttpResponse('Error writing yaml file.',status=400)
+        
+        return HttpResponse('Created.',status=201)
 
 class ShopsCategoriesViewSet(ModelViewSet):
     queryset = ShopsCategories.objects.all()
     serializer_class = ShopsCategoriesSerializer
 
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = []
+        elif self.action in ['update', 'partial_update','destroy']:
+            permission_classes = [IsAdminUser]
+        elif self.action in ['list','retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = []
+        elif self.action in ['update', 'partial_update','destroy']:
+            permission_classes = [IsAdminUser]
+        elif self.action in ['list','retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = []
+        elif self.action in ['update', 'partial_update','destroy']:
+            permission_classes = [IsAdminUser]
+        elif self.action in ['list','retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
 class ProductInfoViewSet(ModelViewSet):
     queryset = ProductInfo.objects.all()
     serializer_class = ProductInfoSerializer
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = []
+        elif self.action in ['update', 'partial_update','destroy']:
+            permission_classes = [IsAdminUser]
+        elif self.action in ['list','retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
 
 class ParameterViewSet(ModelViewSet):
     queryset = Parameter.objects.all()
     serializer_class = ParameterSerializer
 
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = [AllowAny]
+        elif self.action in ['update', 'partial_update','destroy','retrieve',]:
+            permission_classes = [IsAdminUser]
+        elif self.action in ['list']:
+            permission_classes = [IsAdminUser]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
 class ProductParameterViewSet(ModelViewSet):
     queryset = ProductParameter.objects.all()
     serializer_class = ProductParameterSerializer
 
+    def get_permissions(self):
+        if self.action in ['create']:
+            permission_classes = []
+        elif self.action in ['update', 'partial_update','destroy',]:
+            permission_classes = [isAccountOwnerPermission|IsAdminUser]
+        elif self.action in ['list','retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            return []
+        return [permission() for permission in permission_classes]
+
+# Управление корзиной
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -106,7 +225,7 @@ class OrderViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
-        if self.action in ['update', 'partial_update','destroy','retrieve','list']:
+        elif self.action in ['update', 'partial_update','destroy','retrieve','list']:
             permission_classes = [IsAdminUser|isOrderOwnerPermission]
         else:
             return []
@@ -120,16 +239,20 @@ class OrderItemViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
-        if self.action in ['update', 'partial_update','destroy','retrieve','list']:
+        elif self.action in ['update', 'partial_update','destroy','retrieve','list']:
             permission_classes = [IsAdminUser|isOrderOwnerPermission]
         else:
             return []
         return [permission() for permission in permission_classes]
 
 class OrderConfirmation(APIView):
+    queryset = Order.objects.all()
     def post(self,request):
         try:
             user = request.user
+            if user.is_anonymous:
+                return HttpResponseBadRequest('Authorization error')
+                
         except:
             return HttpResponseBadRequest('Authorization error')
         try:

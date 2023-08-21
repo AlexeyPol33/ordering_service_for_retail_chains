@@ -4,11 +4,20 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _  
 
-class UserTypeChoices(models.TextChoices):
-    SHOP = 'Магазин'
-    BUYER = 'Покупатель'    
+class Shop(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Название',unique=True)
+    url = models.URLField(verbose_name='Ссылка', null=True, blank=True,unique=True)
+    filename = models.CharField(max_length=100, verbose_name='Название файла',blank=True,null=True)
+
+    class Meta:
+        verbose_name = 'Магазин'
+        verbose_name_plural = "Список магазинов"
+        ordering = ('-name',)
+    
+    def __str__(self) -> str:
+        return self.name
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -39,12 +48,25 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
     
 class User(AbstractUser):
+    class UserPositionChoices(models.TextChoices):
+        SHOP_OWNER = 'Владелец магазина'
+        BUYER = 'Покупатель'
+
     REQUIRED_FIELDS = []
     objects = UserManager()
     USERNAME_FIELD = 'email'
     email = models.EmailField(_('email addres'), unique=True)
-    company = models.CharField(verbose_name='Компания', max_length=40, blank=True)
-    position = models.CharField(verbose_name='Должность', max_length=40, blank=True)
+    company = models.ForeignKey(
+        Shop,
+        blank=True,
+        on_delete=models.CASCADE,
+        verbose_name='Компания'
+        )
+    position = models.CharField(
+        choices=UserPositionChoices.choices,
+        default=UserPositionChoices.BUYER,
+        verbose_name='Позиция'
+        )
     username_validator = UnicodeUsernameValidator()
     username = models.CharField(
         _('username'),
@@ -63,10 +85,7 @@ class User(AbstractUser):
             'Unselect this instead of deleting accounts. '
         ),
     )
-    type = models.CharField(verbose_name='Тип пользователя',
-                             choices=UserTypeChoices.choices,
-                             max_length=10,
-                             default=UserTypeChoices.BUYER)
+    
     
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name}'
@@ -76,19 +95,7 @@ class User(AbstractUser):
         verbose_name_plural = 'Список пользователей'
         ordering = ('email',)
 
-class Shop(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Название',unique=True)
-    url = models.URLField(verbose_name='Ссылка', null=True, blank=True,unique=True)
-    filename = models.CharField(max_length=100, verbose_name='Название файла',blank=True,null=True)
 
-    class Meta:
-        verbose_name = 'Магазин'
-        verbose_name_plural = "Список магазинов"
-        ordering = ('-name',)
-    
-    def __str__(self) -> str:
-        return self.name
-    
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название', unique=True)
     shops = models.ManyToManyField(Shop, through='ShopsCategories',blank=True)
@@ -183,7 +190,7 @@ class Contact(models.Model):
     locality = models.CharField(max_length=50,verbose_name='населенный пункт',null=True, blank=True)
     street = models.CharField(max_length=50,verbose_name='улица',null=True, blank=True)
     house = models.CharField(max_length=50,verbose_name='дом',null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True,verbose_name='Описание')
 
     class Meta:
         verbose_name = 'Контакт'

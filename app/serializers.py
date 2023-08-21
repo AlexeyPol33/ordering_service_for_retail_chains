@@ -49,7 +49,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id','user','dt','status']
 
-class OrderItemSerializer(serializers.ModelSerializer): #TODO добавить валидацию количиства товара
+class OrderItemSerializer(serializers.ModelSerializer): #TODO добавить валидацию количества товара
     class Meta:
         model = OrderItem
         fields = ['id','order','product','quantity']
@@ -89,7 +89,23 @@ class OrderItemSerializer(serializers.ModelSerializer): #TODO добавить �
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = ['id','type','user','value']
+        fields = ['id','user','phone','country','region','locality','street','house','description']
+    def update(self, instance, validated_data):
+
+        try:
+            instance.phone = validated_data.get('phone', instance.phone)
+        except:
+            pass
+        instance.country = validated_data.get('country', instance.country)
+        instance.region = validated_data.get('region', instance.region)
+        instance.locality = validated_data.get('locality', instance.locality)
+        instance.street = validated_data.get('street', instance.street)
+        instance.house = validated_data.get('house', instance.house)
+        instance.description = validated_data.get('description', instance.description)
+        
+
+        instance.save()
+        return instance
 
 class ObtainTokenSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -102,6 +118,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model =  User
         fields = ['id','username','password','email','company','position']
+
     def create(self, validated_data):
         user = User.objects.create(
 
@@ -114,9 +131,13 @@ class UserSerializer(serializers.ModelSerializer):
             message = 'Для подтверждения регистрации перейдите по ссылке:',
             from_email = 'your_email@example.com', 
             recipient_list = [user.email],
-            fail_silently=False)
+            fail_silently=False
+            )
         user.is_active = True
         user.save()
         contact = Contact.objects.create(user=user)
         contact.save()
         return user
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)

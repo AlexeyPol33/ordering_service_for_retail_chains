@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 from os import getenv, path
 
 load_dotenv()
@@ -122,6 +123,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.AllowAllUsersRemoteUserBackend']
 
 SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     
     'TOKEN_OBTAIN_SERIALIZER': 'app.serializers.ObtainTokenSerializer',
 

@@ -5,16 +5,16 @@ POST {{baseUrl}}/user/
 Content-Type: application/json
 
 {
-    "username":"username",
+    "username":"username2",
     "password":"password",
-    "email":"test@email.com",
+    "email":"test2@email.com",
     "company":"company",
     "position":"position"
 }
 
 ###
 
-#Аутентификация
+#Получить токен
 POST {{baseUrl}}/token/
 Content-Type: application/json
 
@@ -26,12 +26,32 @@ Content-Type: application/json
 ###
 
 #Получить пользователя
-GET {{baseUrl}}/user/1/
+GET {{baseUrl}}/user/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDY1NzA0LCJpYXQiOjE2OTI0NjU0MDQsImp0aSI6Ijk1MjRmYTlhN2Y1MDRkMjFhNmZmMWIwNDQxMTA2ODU1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.9Udg5954dveFT-wgK-l8D-PG1OgFrxq-spIBaZBwQKc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM4MzcyLCJpYXQiOjE2OTI1MzQ3NzIsImp0aSI6IjI4YzQ3MmFjNzJmMTQ4ZWM5YzYzNDljYWJjYzc0YjNmIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.Fcp6f4yX5p75BC2bpl8m3UyGxXdsczQCqVDpC9b8Cyo
 
 ###
 
+#Посмотреть контактную информацию
+GET  {{baseUrl}}/user/contact/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM2Nzc2LCJpYXQiOjE2OTI1MzMxNzYsImp0aSI6ImFkY2I1NDYxNzYwOTQ2ZWY5ZDc2MWU2ZDkyZjNjYWM4IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.ORbFEwBLZl6tn-iBJteGzrXwWdexug7kC4dVecJ1V_4
+###
+# Изменить контактную информацию
+PATCH {{baseUrl}}/user/contact/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM2Nzc2LCJpYXQiOjE2OTI1MzMxNzYsImp0aSI6ImFkY2I1NDYxNzYwOTQ2ZWY5ZDc2MWU2ZDkyZjNjYWM4IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.ORbFEwBLZl6tn-iBJteGzrXwWdexug7kC4dVecJ1V_4
+Content-Type: application/json
+
+{
+    "user":5,
+    "phone": "+79991112230",
+    "country": "Россия",
+    "region": "Москва",
+    "locality": "Москва",
+    "street": "Улица",
+    "house": "7к2"
+}
+###
 #Получить список продуктов
 get {{baseUrl}}/product/
 Content-Type: application/json
@@ -71,4 +91,11 @@ Content-Type: application/json
 ###
 # Просмотр корзины
 GET {{baseUrl}}/orderitem/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDY1NzA0LCJpYXQiOjE2OTI0NjU0MDQsImp0aSI6Ijk1MjRmYTlhN2Y1MDRkMjFhNmZmMWIwNDQxMTA2ODU1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.9Udg5954dveFT-wgK-l8D-PG1OgFrxq-spIBaZBwQKc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTA5NDkwLCJpYXQiOjE2OTI1MDkxOTAsImp0aSI6ImJiYWM5MDMwMDkwMjQ1OTRiNDU3MmZlN2RiYmEwMTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.6lfrFp8QB37STuba7EtXie4xPPB8mTkxm8ITybjkaKw
+###
+GET {{baseUrl}}/order/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM3MjM2LCJpYXQiOjE2OTI1MzM2MzYsImp0aSI6IjA2NzdjMzk2MGU1OTQxN2U4M2MyMzI0ZGYwMDczNGM1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.gRiYAyU7QXXVs2X_19GoCtm0EspWhwG5ISVpUJ2e4co
+###
+#Подтвердить заказ
+POST {{baseUrl}}/order/confirm/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM3MjM2LCJpYXQiOjE2OTI1MzM2MzYsImp0aSI6IjA2NzdjMzk2MGU1OTQxN2U4M2MyMzI0ZGYwMDczNGM1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.gRiYAyU7QXXVs2X_19GoCtm0EspWhwG5ISVpUJ2e4co

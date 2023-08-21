@@ -17,6 +17,6 @@ router.register('parameter',ParameterViewSet)
 router.register('productparameter',ProductParameterViewSet)
 router.register('order',OrderViewSet)
 router.register('orderitem',OrderItemViewSet)
-router.register('contact',ContactViewSet)
+router.register('user/contact',ContactViewSet)
 
 urlpatterns = router.urls

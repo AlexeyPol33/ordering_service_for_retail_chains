@@ -6,18 +6,47 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext_lazy as _  
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Название', unique=True)
+    
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Список Категорий'
+        ordering = ('-name',)
+
+    def __str__(self) -> str:
+        return self.name
+
 class Shop(models.Model):
+
     name = models.CharField(max_length=100, verbose_name='Название',unique=True)
     url = models.URLField(verbose_name='Ссылка', null=True, blank=True,unique=True)
-    filename = models.CharField(max_length=100, verbose_name='Название файла',blank=True,null=True)
+    categories = models.ManyToManyField(Category, through='ShopsCategories',blank=True,verbose_name='Категории')
 
     class Meta:
         verbose_name = 'Магазин'
         verbose_name_plural = "Список магазинов"
         ordering = ('-name',)
-    
+
+    def add_categories(self,category:str|list):
+        if isinstance(category, str):
+            category,c = Category.objects.get_or_create(name=category)
+            self.categories.add(category)
+        elif isinstance(category, list):
+            for cat in category:
+                category,c = Category.objects.get_or_create(name=category)
+                self.categories.add(category)
+        else:
+            raise
+
     def __str__(self) -> str:
         return self.name
+
+class ShopsCategories(models.Model):
+    categories = models.ForeignKey(Category, on_delete=models.CASCADE)
+    shops = models.ForeignKey(Shop,on_delete=models.CASCADE)
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -59,6 +88,7 @@ class User(AbstractUser):
     company = models.ForeignKey(
         Shop,
         blank=True,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name='Компания'
         )
@@ -95,48 +125,20 @@ class User(AbstractUser):
         verbose_name_plural = 'Список пользователей'
         ordering = ('email',)
 
+class Contact(models.Model):
 
-class Category(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Название', unique=True)
-    shops = models.ManyToManyField(Shop, through='ShopsCategories',blank=True)
-
-    class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Список Категорий'
-        ordering = ('-name',)
-
-    def __str__(self) -> str:
-        return self.name
-    
-class ShopsCategories(models.Model):
-    categories = models.ForeignKey(Category, on_delete=models.CASCADE)
-    shops = models.ForeignKey(Shop,on_delete=models.CASCADE)
-
-class Product(models.Model):
-
-    category = models.ForeignKey(Category,verbose_name='Категория', null=True, blank=True,on_delete=models.CASCADE)
-    name = models.CharField(max_length=100,verbose_name='Название')
+    user = models.OneToOneField(User,verbose_name='Пользователь',on_delete=models.CASCADE)
+    phone = PhoneNumberField(null=True,blank=True)
+    country = models.CharField(max_length=20,verbose_name='страна',null=True, blank=True)
+    region = models.CharField(max_length=20,verbose_name='регион',null=True, blank=True)
+    locality = models.CharField(max_length=50,verbose_name='населенный пункт',null=True, blank=True)
+    street = models.CharField(max_length=50,verbose_name='улица',null=True, blank=True)
+    house = models.CharField(max_length=50,verbose_name='дом',null=True, blank=True)
+    description = models.TextField(null=True, blank=True,verbose_name='Описание')
 
     class Meta:
-        verbose_name = 'Продукт'
-        verbose_name_plural = 'Список Продуктов'
-        ordering = ('-name',)
-    
-    def __str__(self) -> str:
-        return self.name
-    
-class ProductInfo(models.Model):
-    product = models.OneToOneField(Product,verbose_name='Продукт',on_delete=models.CASCADE)
-    shop = models.ForeignKey(Shop,verbose_name='Магазин', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100,verbose_name='Название')
-    quantity = models.FloatField(verbose_name='Количество',validators=[MinValueValidator(0)])
-    price = models.FloatField(verbose_name='Цена',validators=[MinValueValidator(0)])
-    price_rrc = models.FloatField(verbose_name='разрешенная розничная цена без НДС ')
-    
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.pk = self.product.pk
-        super(ProductInfo, self).save(*args, **kwargs)
+        verbose_name = 'Контакт'
+        verbose_name_plural = 'Список контактов'
 
 class Parameter(models.Model):
     name = models.CharField(max_length=100,verbose_name='Название',unique = True)
@@ -149,10 +151,61 @@ class Parameter(models.Model):
     def __str__(self) -> str:
         return self.name
 
-class ProductParameter(models.Model):
+
+class Product(models.Model):
+
+    categories = models.ManyToManyField(Category,through='ProductsCategories',blank=True,null=True)
+    name = models.CharField(max_length=100,verbose_name='Название')
+
+    class Meta:
+        verbose_name = 'Продукт'
+        verbose_name_plural = 'Список Продуктов'
+        ordering = ('-name',)
+    
+    def add_categories(self,category:str|list):
+        if isinstance(category, str):
+            category,c = Category.objects.get_or_create(name=category)
+            self.categories.add(category)
+        elif isinstance(category, list):
+            for cat in category:
+                category,c = Category.objects.get_or_create(name=category)
+                self.categories.add(category)
+        else:
+            raise
+
+    def __str__(self) -> str:
+        return self.name
+
+class ProductInfo(models.Model):
+    product = models.OneToOneField(Product,verbose_name='Продукт',on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop,verbose_name='Магазин', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100,verbose_name='Название')
+    parameters = models.ManyToManyField(Parameter,through='ProductsParameters',verbose_name='Параметры',blank=True,null=True)
+    quantity = models.FloatField(verbose_name='Количество',validators=[MinValueValidator(0)],default=0)
+    price = models.FloatField(verbose_name='Цена',validators=[MinValueValidator(0)],default=0)
+    price_rrc = models.FloatField(verbose_name='разрешенная розничная цена без НДС ',default=0)
+
+    def add_parameter(self, parameter, value=None):
+        self.parameters.add(parameter)
+        if value:
+            products_parameter = ProductsParameters.objects.get(parameter=parameter,product_info=self)
+            products_parameter.value = value
+            products_parameter.save()
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.pk = self.product.pk
+            self.name = self.product.name
+        super(ProductInfo, self).save(*args, **kwargs)
+
+class ProductsCategories(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    category = models.ForeignKey(Category,on_delete=models.CASCADE)
+
+class ProductsParameters(models.Model):
     product_info = models.ForeignKey(ProductInfo,on_delete=models.CASCADE,verbose_name='Информация о продукте')
     parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE, verbose_name='Параметер')
-    value = models.TextField(verbose_name='Значение')
+    value = models.TextField(verbose_name='Значение',blank=True)
 
 
 class Order(models.Model):
@@ -175,23 +228,8 @@ class Order(models.Model):
     status = models.CharField(choices=OrderStatusChoice.choices,
                                 default=OrderStatusChoice.NEW,
                                 verbose_name='Статус')
-     
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order,verbose_name='Заказ',on_delete=models.CASCADE)
     product = models.ForeignKey(Product,verbose_name='Продукт',on_delete=models.CASCADE)
     quantity = models.FloatField(validators=[MinValueValidator(0)], verbose_name='Количество')
-
-class Contact(models.Model):
-
-    user = models.OneToOneField(User,verbose_name='Пользователь',on_delete=models.CASCADE)
-    phone = PhoneNumberField(null=True,blank=True)
-    country = models.CharField(max_length=20,verbose_name='страна',null=True, blank=True)
-    region = models.CharField(max_length=20,verbose_name='регион',null=True, blank=True)
-    locality = models.CharField(max_length=50,verbose_name='населенный пункт',null=True, blank=True)
-    street = models.CharField(max_length=50,verbose_name='улица',null=True, blank=True)
-    house = models.CharField(max_length=50,verbose_name='дом',null=True, blank=True)
-    description = models.TextField(null=True, blank=True,verbose_name='Описание')
-
-    class Meta:
-        verbose_name = 'Контакт'
-        verbose_name_plural = 'Список контактов'

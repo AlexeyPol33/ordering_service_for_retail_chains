@@ -12,9 +12,10 @@ class isAccountOwnerPermission(permissions.BasePermission):
 class IsShopOwnerPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         
+        if request.user.is_anonymous:
+            return False
         if request.user.position != User.UserPositionChoices.SHOP_OWNER:
             return False
-        
         if isinstance(obj,Shop):
             return request.user.company == obj
         elif isinstance(obj,Product):

@@ -4,12 +4,12 @@ from django.http import HttpResponse
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from app.models import Shop,ShopsCategories,Category,Product,\
-ProductInfo,Parameter,ProductParameter,Order,\
+ProductInfo,Parameter,ProductsParameters,Order,\
 OrderItem,Contact, User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework_simplejwt.tokens import RefreshToken
-from yaml_data_dump import db_dump
+from .yaml_data_dump import db_dump
 from django.core.mail import send_mail
 from django.http import HttpRequest
 from os import getenv
@@ -19,10 +19,9 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
 from rest_framework.authentication import BasicAuthentication
 from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission,\
 isOrderOwnerPermission
-from app.serializers import ShopSerializer, ShopsCategoriesSerializer,\
-CategorySerializer, ProductSerializer, ProductInfoSerializer,\
-ParameterSerializer, ProductParameterSerializer, OrderSerializer,\
-OrderItemSerializer, ContactSerializer, UserSerializer, ObtainTokenSerializer
+from app.serializers import ShopSerializer,ProductSerializer,\
+ProductInfoSerializer,OrderSerializer,OrderItemSerializer,\
+ContactSerializer, UserSerializer
 
 def test_send_email():
     subject = 'Тест почтовой службы'
@@ -71,7 +70,6 @@ class ContactViewSet(ModelViewSet):
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
-    
     
     def get_permissions(self):
         if self.action in ['create']:
@@ -127,45 +125,15 @@ class PartnerUpdate(APIView):
         
         return HttpResponse('Created.',status=201)
 
-class ShopsCategoriesViewSet(ModelViewSet):
-    queryset = ShopsCategories.objects.all()
-    serializer_class = ShopsCategoriesSerializer
-
-    def get_permissions(self):
-        if self.action in ['create']:
-            permission_classes = []
-        elif self.action in ['update', 'partial_update','destroy']:
-            permission_classes = [IsAdminUser]
-        elif self.action in ['list','retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            return []
-        return [permission() for permission in permission_classes]
-
-class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-    def get_permissions(self):
-        if self.action in ['create']:
-            permission_classes = []
-        elif self.action in ['update', 'partial_update','destroy']:
-            permission_classes = [IsAdminUser]
-        elif self.action in ['list','retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            return []
-        return [permission() for permission in permission_classes]
-
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     def get_permissions(self):
         if self.action in ['create']:
-            permission_classes = []
+            permission_classes = [IsShopOwnerPermission]
         elif self.action in ['update', 'partial_update','destroy']:
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsShopOwnerPermission|IsAdminUser]
         elif self.action in ['list','retrieve']:
             permission_classes = [AllowAny]
         else:
@@ -178,39 +146,9 @@ class ProductInfoViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create']:
-            permission_classes = []
-        elif self.action in ['update', 'partial_update','destroy']:
-            permission_classes = [IsAdminUser]
-        elif self.action in ['list','retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            return []
-        return [permission() for permission in permission_classes]
-
-class ParameterViewSet(ModelViewSet):
-    queryset = Parameter.objects.all()
-    serializer_class = ParameterSerializer
-
-    def get_permissions(self):
-        if self.action in ['create']:
-            permission_classes = [AllowAny]
-        elif self.action in ['update', 'partial_update','destroy','retrieve',]:
-            permission_classes = [IsAdminUser]
-        elif self.action in ['list']:
-            permission_classes = [IsAdminUser]
-        else:
-            return []
-        return [permission() for permission in permission_classes]
-
-class ProductParameterViewSet(ModelViewSet):
-    queryset = ProductParameter.objects.all()
-    serializer_class = ProductParameterSerializer
-
-    def get_permissions(self):
-        if self.action in ['create']:
-            permission_classes = []
-        elif self.action in ['update', 'partial_update','destroy',]:
-            permission_classes = [isAccountOwnerPermission|IsAdminUser]
+            return [IsShopOwnerPermission|IsAdminUser]
+        elif self.action in ['update', 'partial_update']:
+            permission_classes = [IsShopOwnerPermission|IsAdminUser]
         elif self.action in ['list','retrieve']:
             permission_classes = [AllowAny]
         else:
@@ -288,4 +226,3 @@ class OrderConfirmation(APIView):
             order.save()
         return Response('All orders have\
                          changed their status to confirmed')
-

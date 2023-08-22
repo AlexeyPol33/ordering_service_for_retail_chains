@@ -39,7 +39,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ###
 # Изменить контактную информацию
 PATCH {{baseUrl}}/user/contact/1/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM2Nzc2LCJpYXQiOjE2OTI1MzMxNzYsImp0aSI6ImFkY2I1NDYxNzYwOTQ2ZWY5ZDc2MWU2ZDkyZjNjYWM4IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.ORbFEwBLZl6tn-iBJteGzrXwWdexug7kC4dVecJ1V_4
+Authorization: Bearer 
 Content-Type: application/json
 
 {
@@ -70,7 +70,7 @@ GET {{baseUrl}}/productinfo/4216292
 
 #добавить товар в корзину
 POST {{baseUrl}}/orderitem/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNDY1NzA0LCJpYXQiOjE2OTI0NjU0MDQsImp0aSI6Ijk1MjRmYTlhN2Y1MDRkMjFhNmZmMWIwNDQxMTA2ODU1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.9Udg5954dveFT-wgK-l8D-PG1OgFrxq-spIBaZBwQKc
+Authorization: Bearer 
 Content-Type: application/json
 
 {
@@ -91,11 +91,34 @@ Content-Type: application/json
 ###
 # Просмотр корзины
 GET {{baseUrl}}/orderitem/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTA5NDkwLCJpYXQiOjE2OTI1MDkxOTAsImp0aSI6ImJiYWM5MDMwMDkwMjQ1OTRiNDU3MmZlN2RiYmEwMTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.6lfrFp8QB37STuba7EtXie4xPPB8mTkxm8ITybjkaKw
+Authorization: Bearer 
 ###
 GET {{baseUrl}}/order/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM3MjM2LCJpYXQiOjE2OTI1MzM2MzYsImp0aSI6IjA2NzdjMzk2MGU1OTQxN2U4M2MyMzI0ZGYwMDczNGM1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.gRiYAyU7QXXVs2X_19GoCtm0EspWhwG5ISVpUJ2e4co
+Authorization: Bearer 
 ###
 #Подтвердить заказ
 POST {{baseUrl}}/order/confirm/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM3MjM2LCJpYXQiOjE2OTI1MzM2MzYsImp0aSI6IjA2NzdjMzk2MGU1OTQxN2U4M2MyMzI0ZGYwMDczNGM1IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.gRiYAyU7QXXVs2X_19GoCtm0EspWhwG5ISVpUJ2e4co
+Authorization: Bearer 
+
+#######
+
+# Получить токен 
+POST {{baseUrl}}/token/
+Content-Type: application/json
+
+{
+    "email":"shopowner@email.ru",
+    "password":"shopowner"
+}
+###
+# Получить магазины
+GET  {{baseUrl}}/shop/
+###
+# Изменить магазин
+PATCH {{baseUrl}}/shop/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNzM0NjI2LCJpYXQiOjE2OTI3MzEwMjYsImp0aSI6ImUzY2ZhYTdkZGZmMDQxYWZhZjI5MzBiOTI4NjY5OWZkIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.uezlayaaJcR1gk2sTtWog6uusFxdUQ9_MIfGAto5uMo
+Content-Type: application/json
+
+{
+    "categories"
+}

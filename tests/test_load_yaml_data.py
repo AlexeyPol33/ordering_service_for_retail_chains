@@ -1,7 +1,7 @@
 import pytest
 from app.models import Shop, Category,Product,\
-ProductInfo,Parameter,ProductParameter
-from app.management.commands.load_yaml_data import db_dump
+ProductInfo,Parameter,ProductsParameters
+from app.yaml_data_dump import db_dump
 
 @pytest.fixture
 def data_fixtur():
@@ -26,7 +26,7 @@ def data_fixtur():
 
 @pytest.mark.django_db
 def test_db_dump(data_fixtur):
-    db_dump(data_fixtur,'test')
+    db_dump(data_fixtur)
     assert Shop.objects.get(id=1).name == 'Связной'
     assert Category.objects.get(id=1).name == 'Смартфоны'
     assert Product.objects.get(id=1).name == 'Смартфон Apple iPhone XS Max 512GB (золотистый)'

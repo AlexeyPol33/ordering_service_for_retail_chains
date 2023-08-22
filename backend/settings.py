@@ -32,7 +32,7 @@ DEBUG = getenv('DEBUG',True)
 
 ALLOWED_HOSTS = [getenv('ALLOWED_HOSTS','*')]
 
-
+SITE_DOMAIN = getenv('SITE_DOMAIN',default='127.0.0.1:8000')
 # Application definition
 
 INSTALLED_APPS = [

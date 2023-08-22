@@ -1,51 +1,13 @@
 from app.models import Shop, Category,Product,\
-ProductInfo,Parameter,ProductParameter,Order,\
+ProductInfo,Parameter,Order,\
 OrderItem,Contact, User
 from django.core.management.base import BaseCommand, CommandParser
+from app.yaml_data_dump import db_dump
 import yaml
 import os
 
 
-def db_dump(data:dict,filename:str) -> None:
 
-    shop = Shop()
-   
-
-    shop.name = data['shop']
-    #shop.url = ''
-    shop.filename = filename
-    shop.save()
-
-    for c in data['categories']:
-        category = Category()
-        category.id = c['id']
-        category.name = c['name']
-        category.shops == shop
-        category.save()
-
-    for g in data['goods']:
-        product = Product()
-        product.id = g['id']
-        product.name = g['name']
-        product.category = Category.objects.get(id=g['category'])
-        product.save()
-        product_info = ProductInfo() 
-        product_info.product = product
-        product_info.shop = shop
-        product_info.name = g['name']
-        product_info.quantity = g['quantity']
-        product_info.price = g['price']
-        product_info.price_rrc = g['price_rrc']
-        product_info.save()
-        for p in g['parameters'].keys():
-            
-            parameter = Parameter.objects.get_or_create(
-                name = p
-            )
-            product_parameter = ProductParameter()
-            product_parameter.product_info = product_info
-            product_parameter.parameter = parameter[0]
-            product_parameter.value = g['parameters'][p]
             
 
 
@@ -70,13 +32,24 @@ class Command(BaseCommand):
                     break
         if len(path) == 0:
             self.stderr.write('Файл с расшерением yaml не найден')
+        user = None
+        if options['user']:
+            try:
+                user = User.objects.get(id=options['user'])
+            except:
+                self.stderr.write('Пользователь не найден')
+
 
         data = {}
         with open(path,'r',encoding='utf-8') as f:
             data = yaml.safe_load(f)
 
         try:
-            db_dump(data,path)
+            shop = db_dump(data)
+            if user:
+                user.company = shop
+                user.position = User.UserPositionChoices.SHOP_OWNER
+                user.save()
             self.stdout.write(f'Файл {path} успешно загружен в базу данных')          
         except:
             self.stderr.write(f'Не удалось загрузить данные из файла {path}')
@@ -91,6 +64,6 @@ class Command(BaseCommand):
         parser.add_argument(
             '-u',
             '--user',
-            type=str,
-            help='Задает владельца магазина'
+            type=int,
+            help='Задает владельца магазина, нужно указать id пользователя в качестве аргумента'
         )

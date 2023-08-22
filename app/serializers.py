@@ -3,25 +3,25 @@ from rest_framework import validators
 from django.core.mail import send_mail
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from app.models import Shop,ShopsCategories,Category,Product,\
-ProductInfo,Parameter,ProductParameter,Order,\
+ProductInfo,Parameter,ProductsParameters,Order,\
 OrderItem,Contact, User
 
 
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shop
-        fields = ['id','name','url','filename']
+        fields = ['id','name','url','categories']
 
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ['id','name','shops']
-
-class ShopsCategoriesSerializer:
-    class Meta:
-        model = ShopsCategories
-        fields = ['id','categories','shops']
+    def create(self, validated_data):
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name',instance.name)
+        instance.url = validated_data.get('url',instance.url)
+        if validated_data.get('categories',None):
+            instance.add_categories(validated_data['categories'])
+        instance.save()
+        return instance
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -29,20 +29,59 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id','category','name']
 
+    def create(self, validated_data):
+        product = Product()
+        try:
+            product.id = validated_data['id']
+        except:
+            pass
+        product.name = validated_data['name']
+        if validated_data.get('categories',None):
+            product.add_categories(validated_data['categories'])
+        product.save()
+        product_info = ProductInfo.objects.create(
+            product = product,
+            shop = self.context['request'].user.company
+        )
+
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name',instance.name)
+        if validated_data.get('categories',None):
+            instance.add_categories(validated_data['categories'])
+        instance.save()
+        return instance
+
 class ProductInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductInfo
-        fields = ['id','product','shop','name','quantity','price','price_rrc']
+        fields = ['id','product','shop','name','quantity','parameters','price','price_rrc']
 
-class ParameterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Parameter
-        fields = ['id','name']
+    def create(self, validated_data):
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.quantity = validated_data.get('quantity',instance.quantity)
+        instance.price = validated_data.get('price',instance.price)
+        instance.price_rrc = validated_data.get('price_rrc',instance.price_rrc)
 
-class ProductParameterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductParameter
-        fields = ['id','product_info','parameter','value']
+        if validated_data.get('parameters',None):
+            parameter = validated_data['parameters']
+            if isinstance(parameter,dict):
+                param,value = list(*parameter.items())
+                instance.add_parameter(param,value)
+            if isinstance(parameter,str):
+                instance.add_parameter(parameter)
+            if isinstance(parameter,list):
+                for p in parameter:
+                    if isinstance(p,dict):
+                        param,value = list(*p.items())
+                        instance.add_parameter(param,value)
+                    if isinstance(p,str):
+                        instance.add_parameter(p)
+
+        return instance
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:

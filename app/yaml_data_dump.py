@@ -1,50 +1,45 @@
 from app.models import Shop, Category,Product,\
-ProductInfo,Parameter,ProductParameter
+ProductInfo,Parameter,ProductsParameters
 from django.core.management.base import BaseCommand, CommandParser
-from django.contrib.sites.shortcuts import get_current_site
+from backend.settings import SITE_DOMAIN
 from django.http import HttpRequest
 
 
-def db_dump(data:dict,filename:str,shop=None) -> None:
+def db_dump(data:dict,shop=None) -> Shop:
 
     if shop == None:
-        shop = Shop()
+        shop,c = Shop.objects.get_or_create(name=data['shop'])
 
     shop.name = data['shop']
-    current_site = get_current_site(HttpRequest())
-    shop.url = f"http://{current_site.domain}/shop/{shop.id}"
-    shop.filename = filename
+
+    shop.url = f"http://{SITE_DOMAIN}/api/shop/{shop.id}"
     shop.save()
 
     for c in data['categories']:
         category = Category()
         category.id = c['id']
         category.name = c['name']
-        category.shops == shop
         category.save()
+        shop.categories.add(category)
 
     for g in data['goods']:
-        product = Product()
-        product.id = g['id']
+        product,c = Product.objects.get_or_create(id = g['id'])
         product.name = g['name']
-        product.category = Category.objects.get(id=g['category'])
+        product.categories.add(Category.objects.get(id=g['category']))
         product.save()
-        product_info = ProductInfo() 
-        product_info.product = product
-        product_info.shop = shop
-        product_info.name = g['name']
-        product_info.quantity = g['quantity']
-        product_info.price = g['price']
-        product_info.price_rrc = g['price_rrc']
-        product_info.save()
+        product_info,с = ProductInfo.objects.update_or_create(
+            product = product,
+            defaults={'quantity':g['quantity'],
+                      'price':g['price'],
+                      'price_rrc':g['price_rrc'],
+                      'shop':shop})
+        
         for p in g['parameters'].keys():
             
-            parameter = Parameter.objects.get_or_create(
+            parameter,c = Parameter.objects.get_or_create(
                 name = p
             )
-            product_parameter = ProductParameter()
-            product_parameter.product_info = product_info
-            product_parameter.parameter = parameter[0]
-            product_parameter.value = g['parameters'][p]
-            
+            product_info.add_parameter(parameter=parameter,value=g['parameters'][p])
+        product_info.save()
+    return shop
 

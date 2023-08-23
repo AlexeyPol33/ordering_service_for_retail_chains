@@ -110,15 +110,85 @@ Content-Type: application/json
     "email":"shopowner@email.ru",
     "password":"shopowner"
 }
+
 ###
 # Получить магазины
 GET  {{baseUrl}}/shop/
+
 ###
-# Изменить магазин
+#Обновление магазина
 PATCH {{baseUrl}}/shop/1/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNzM0NjI2LCJpYXQiOjE2OTI3MzEwMjYsImp0aSI6ImUzY2ZhYTdkZGZmMDQxYWZhZjI5MzBiOTI4NjY5OWZkIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.uezlayaaJcR1gk2sTtWog6uusFxdUQ9_MIfGAto5uMo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODAwNTA1LCJpYXQiOjE2OTI3OTY5MDUsImp0aSI6Ijg2OGM0MjYxY2RkZDRmNmJiNjQ4MzJkMjJiMmUxNTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.j7ay0PInWxLS2jLZ3zmlxlwDyorufjIoV-lrhLSVgSY
 Content-Type: application/json
 
 {
-    "categories"
+    "name":"Связной",
+    "url": "http://127.0.0.1:8000/api/shop/1",
+    "categories": ["Смартфоны","Аксессуары","Flash-накопители"]
+}
+
+###
+# Если категории отправить списком, то предыдущий список категорий заменяется новым
+PATCH {{baseUrl}}/shop/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODAwNTA1LCJpYXQiOjE2OTI3OTY5MDUsImp0aSI6Ijg2OGM0MjYxY2RkZDRmNmJiNjQ4MzJkMjJiMmUxNTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.j7ay0PInWxLS2jLZ3zmlxlwDyorufjIoV-lrhLSVgSY
+Content-Type: application/json
+
+{
+    "categories": ["Тестовая категория 2"]
+}
+
+###
+# Если строкой, то содержание строки добавляется к уже установленным категориям
+PATCH {{baseUrl}}/shop/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODAwNTA1LCJpYXQiOjE2OTI3OTY5MDUsImp0aSI6Ijg2OGM0MjYxY2RkZDRmNmJiNjQ4MzJkMjJiMmUxNTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.j7ay0PInWxLS2jLZ3zmlxlwDyorufjIoV-lrhLSVgSY
+Content-Type: application/json
+
+{
+    "categories": "Тестовая категория 2"
+}
+
+###
+# Посмотреть продукты
+get {{baseUrl}}/product/
+Content-Type: application/json
+###
+#Посмотреть продукт
+get {{baseUrl}}/product/4216313
+Content-Type: application/json
+###
+#Посмотреть карточку товара
+get {{baseUrl}}/productinfo/4216313
+Content-Type: application/json
+###
+# Создать продукт
+POST {{baseUrl}}/product/
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODA0NTczLCJpYXQiOjE2OTI4MDA5NzMsImp0aSI6ImU2MjBmZDZlNzEwMDQ5YTU4YmRjMGU3YmRhNTlhMTkzIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.__ABkCHds25S3OXyH4KthkgzDgXOY9m-zAZ5IQ946bk
+Content-Type: application/json
+
+{
+    "name":"Тестовый продукт3",
+    "categories":["Категория тестового продукта3","Категория2","Категория3"]
+}
+###
+# Обновить продукт
+PATCH {{baseUrl}}/product/66/
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODA0NTczLCJpYXQiOjE2OTI4MDA5NzMsImp0aSI6ImU2MjBmZDZlNzEwMDQ5YTU4YmRjMGU3YmRhNTlhMTkzIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.__ABkCHds25S3OXyH4KthkgzDgXOY9m-zAZ5IQ946bk
+Content-Type: application/json
+
+{
+    "name":"Новое имя",
+    "categories": ["Новая категория"]
+}
+
+###
+# Обновить карточку товара
+PATCH {{baseUrl}}/productinfo/66/
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODE3NjY4LCJpYXQiOjE2OTI4MTQwNjgsImp0aSI6ImZjYjI4MGQ4ZWMyNTRhMmE4ZDgyYmFkNmJjMGRmMzliIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.Ry-K_BonMCcnwEmZKyi7q_LxTHgLnQNdTvZubBe_7mc
+Content-Type: application/json
+
+{
+  "quantity": 15.0,
+  "parameters": [{"Param12":"19"}],
+  "price": 17.0,
+  "price_rrc": 18.0
 }

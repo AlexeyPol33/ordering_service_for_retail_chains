@@ -146,7 +146,7 @@ class ProductInfoViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create']:
-            return [IsShopOwnerPermission|IsAdminUser]
+            return []
         elif self.action in ['update', 'partial_update']:
             permission_classes = [IsShopOwnerPermission|IsAdminUser]
         elif self.action in ['list','retrieve']:

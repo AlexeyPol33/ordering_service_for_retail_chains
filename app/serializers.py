@@ -18,16 +18,28 @@ class ShopSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name',instance.name)
         instance.url = validated_data.get('url',instance.url)
-        if validated_data.get('categories',None):
-            instance.add_categories(validated_data['categories'])
+        categories_data = self.context['request'].data.get('categories',None)
+
+        if categories_data:
+            
+            instance.add_categories(categories_data)
         instance.save()
         return instance
 
 
 class ProductSerializer(serializers.ModelSerializer):
+
+    class CategoriesCustomField(serializers.Field):
+        def to_representation(self, categories):
+            return ', '.join(category.name for category in categories.all())
+
+        def to_internal_value(self, data):
+            return data
+    
+    categories = CategoriesCustomField(required=False)
     class Meta:
         model = Product
-        fields = ['id','category','name']
+        fields = ['id','name','categories']
 
     def create(self, validated_data):
         product = Product()
@@ -36,7 +48,9 @@ class ProductSerializer(serializers.ModelSerializer):
         except:
             pass
         product.name = validated_data['name']
+        product.save()
         if validated_data.get('categories',None):
+            print(product)
             product.add_categories(validated_data['categories'])
         product.save()
         product_info = ProductInfo.objects.create(
@@ -44,7 +58,7 @@ class ProductSerializer(serializers.ModelSerializer):
             shop = self.context['request'].user.company
         )
 
-        return super().create(validated_data)
+        return product
     
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name',instance.name)
@@ -54,6 +68,22 @@ class ProductSerializer(serializers.ModelSerializer):
         return instance
 
 class ProductInfoSerializer(serializers.ModelSerializer):
+
+    class ParametersCustomField(serializers.Field):
+        def to_representation(self, parameters):
+            view = self.context['view']
+            product_info = view.get_object()
+
+            parameters_values = []
+            for p in parameters.all():
+                value = ProductsParameters.objects.get(product_info=product_info,parameter=p).value
+                parameters_values.append(f'{p.name} {value}')
+            return ', '.join(parameter for parameter in parameters_values)
+
+        def to_internal_value(self, data):
+            return data
+        
+    parameters = ParametersCustomField(required=False)
     class Meta:
         model = ProductInfo
         fields = ['id','product','shop','name','quantity','parameters','price','price_rrc']
@@ -67,20 +97,8 @@ class ProductInfoSerializer(serializers.ModelSerializer):
         instance.price_rrc = validated_data.get('price_rrc',instance.price_rrc)
 
         if validated_data.get('parameters',None):
-            parameter = validated_data['parameters']
-            if isinstance(parameter,dict):
-                param,value = list(*parameter.items())
-                instance.add_parameter(param,value)
-            if isinstance(parameter,str):
-                instance.add_parameter(parameter)
-            if isinstance(parameter,list):
-                for p in parameter:
-                    if isinstance(p,dict):
-                        param,value = list(*p.items())
-                        instance.add_parameter(param,value)
-                    if isinstance(p,str):
-                        instance.add_parameter(p)
-
+            instance.add_parameters(validated_data['parameters'])
+        instance.save()
         return instance
 
 class OrderSerializer(serializers.ModelSerializer):

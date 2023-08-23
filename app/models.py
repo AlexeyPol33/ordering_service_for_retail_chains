@@ -33,10 +33,14 @@ class Shop(models.Model):
         if isinstance(category, str):
             category,c = Category.objects.get_or_create(name=category)
             self.categories.add(category)
+            self.save()
         elif isinstance(category, list):
+            _category = []
             for cat in category:
-                category,c = Category.objects.get_or_create(name=category)
-                self.categories.add(category)
+                _cat ,c = Category.objects.get_or_create(name=cat)
+                _category.append(_cat)
+            self.categories.set(_category)
+            self.save()
         else:
             raise
 
@@ -90,7 +94,8 @@ class User(AbstractUser):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
-        verbose_name='Компания'
+        verbose_name='Компания',
+        related_name='user'
         )
     position = models.CharField(
         choices=UserPositionChoices.choices,
@@ -137,8 +142,8 @@ class Contact(models.Model):
     description = models.TextField(null=True, blank=True,verbose_name='Описание')
 
     class Meta:
-        verbose_name = 'Контакт'
-        verbose_name_plural = 'Список контактов'
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Список профилей'
 
 class Parameter(models.Model):
     name = models.CharField(max_length=100,verbose_name='Название',unique = True)
@@ -166,10 +171,14 @@ class Product(models.Model):
         if isinstance(category, str):
             category,c = Category.objects.get_or_create(name=category)
             self.categories.add(category)
+            self.save()
         elif isinstance(category, list):
+            _category = []
             for cat in category:
-                category,c = Category.objects.get_or_create(name=category)
-                self.categories.add(category)
+                _cat ,c = Category.objects.get_or_create(name=cat)
+                _category.append(_cat)
+            self.categories.set(_category)
+            self.save()
         else:
             raise
 
@@ -191,6 +200,33 @@ class ProductInfo(models.Model):
             products_parameter = ProductsParameters.objects.get(parameter=parameter,product_info=self)
             products_parameter.value = value
             products_parameter.save()
+
+    def add_parameters(self,parameters:str|dict|list):
+
+        if isinstance(parameters, str):
+            parameter,c = Parameter.objects.get_or_create(name = parameters)
+            self.parameters.add(parameter)
+            self.save()
+        elif isinstance(parameters,dict):
+            param,val = list(*parameters.items())
+            parameter,c = Parameter.objects.get_or_create(name = param)
+            self.parameters.add(parameter,through_defaults={'value': val})
+            self.save()
+        elif isinstance(parameters, list):
+            self.parameters.clear()
+            for param in parameters:
+                if isinstance(param,str):
+                    _par,c = Parameter.objects.get_or_create(name = param)
+                    self.parameters.add(_par)
+    
+                elif isinstance(param,dict):
+                    _param,val = list(*param.items())
+                    _param,c = Parameter.objects.get_or_create(name = _param)
+                    self.parameters.add(_param,through_defaults={'value': val})
+            self.save()
+
+        else:
+            raise 
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -233,3 +269,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order,verbose_name='Заказ',on_delete=models.CASCADE)
     product = models.ForeignKey(Product,verbose_name='Продукт',on_delete=models.CASCADE)
     quantity = models.FloatField(validators=[MinValueValidator(0)], verbose_name='Количество')
+
+    class Meta:
+        verbose_name = 'Состав заказа'
+        verbose_name_plural = 'Список составов заказов'

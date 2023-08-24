@@ -95,7 +95,7 @@
 </details>
 
 <details>
-<summary>api/shop/upload//</summary>
+<summary>api/shop/upload/</summary>
 
 Скрытый текст здесь...
 

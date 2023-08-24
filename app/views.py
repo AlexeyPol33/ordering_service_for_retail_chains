@@ -16,6 +16,7 @@ from os import getenv
 import yaml
 from django.http import HttpResponseNotAllowed,HttpResponseNotFound,HttpResponseBadRequest
 from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
+from rest_framework_yaml.parsers import YAMLParser
 from rest_framework.authentication import BasicAuthentication
 from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission,\
 isOrderOwnerPermission
@@ -90,6 +91,8 @@ class MakeShopOwner(APIView):
         pass
 
 class PartnerUpdate(APIView):
+
+    parser_classes = (YAMLParser,)
 
     def post(self,request):
 

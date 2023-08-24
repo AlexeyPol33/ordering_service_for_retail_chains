@@ -1,0 +1,29 @@
+FROM python:3.10.11
+
+ENV  SECRET_KEY adada2e121w%szc2!Gsaad2aAF3BhhsyjL25
+ENV  DEBUG 0
+ENV  DB_ENGINE django.db.backends.postgresql
+ENV  DB_NAME ordering_service_for_retail_chains
+ENV  DB_USER postgres
+ENV  DB_PASSWORD postgres
+ENV  DB_HOST postgredb
+ENV  DB_PORT 5432
+ENV  EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
+ENV  ALLOWED_HOSTS *
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY manage.py .
+COPY app/ /app/app/
+COPY backend/ /app/backend/
+
+RUN apt-get update && apt-get install -y libpq-dev
+RUN pip install --no-cache-dir psycopg2
+
+CMD python manage.py makemigrations && \
+    python manage.py migrate && \
+    python manage.py collectstatic && \
+    gunicorn backend.wsgi:application --bind 0.0.0.0:8000

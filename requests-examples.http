@@ -1,5 +1,9 @@
 @baseUrl = http://127.0.0.1:8000/api
 
+GET http://127.0.0.1:8000
+
+###
+
 #Регистрация
 POST {{baseUrl}}/user/
 Content-Type: application/json
@@ -7,9 +11,7 @@ Content-Type: application/json
 {
     "username":"username2",
     "password":"password",
-    "email":"test2@email.com",
-    "company":"company",
-    "position":"position"
+    "email":"test3@email.com"
 }
 
 ###
@@ -19,16 +21,16 @@ POST {{baseUrl}}/token/
 Content-Type: application/json
 
 {
-    "email":"test@email.com",
+    "email":"test3@email.com",
     "password":"password"
 }
 
 ###
 
 #Получить пользователя
-GET {{baseUrl}}/user/1
+GET {{baseUrl}}/user/3
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM4MzcyLCJpYXQiOjE2OTI1MzQ3NzIsImp0aSI6IjI4YzQ3MmFjNzJmMTQ4ZWM5YzYzNDljYWJjYzc0YjNmIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.Fcp6f4yX5p75BC2bpl8m3UyGxXdsczQCqVDpC9b8Cyo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyOTAzMzk0LCJpYXQiOjE2OTI4OTk3OTQsImp0aSI6ImQxODZlNTQ3NzE0ODRlMGNhZTA0NmY3YjFlNTQ0NjdiIiwidXNlcl9pZCI6MywidXNlcm5hbWUiOiJ1c2VybmFtZTIifQ.1QJHj_kF7oIAcZD8UHvAkmSRlvOzskctgmqlGSoGgXE
 
 ###
 
@@ -112,10 +114,22 @@ Content-Type: application/json
 }
 
 ###
+
 # Получить магазины
+
 GET  {{baseUrl}}/shop/
 
 ###
+
+# Загрузить файл магазина
+POST {{baseUrl}}/shop/upload/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyOTA0MjcxLCJpYXQiOjE2OTI5MDA2NzEsImp0aSI6IjgzODI5YTg5ZDc5MzRiYmRiZDA3YjRlNWRkYTIxZWMxIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.zq59qAdVA00Chi5722KpIyyrWibDQ-ZHnyYFX36d-4E
+Content-Type: multipart/form-data; boundary=boundary_string
+
+@./shop1.yaml
+
+###
+
 #Обновление магазина
 PATCH {{baseUrl}}/shop/1/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODAwNTA1LCJpYXQiOjE2OTI3OTY5MDUsImp0aSI6Ijg2OGM0MjYxY2RkZDRmNmJiNjQ4MzJkMjJiMmUxNTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.j7ay0PInWxLS2jLZ3zmlxlwDyorufjIoV-lrhLSVgSY

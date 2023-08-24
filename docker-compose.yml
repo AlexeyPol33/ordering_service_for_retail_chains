@@ -1,0 +1,44 @@
+version: '3.9'
+
+volumes:
+  pgdata:
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    depends_on:
+      - postgredb
+      - nginx
+
+  postgredb:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=ordering_service_for_retail_chains
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5555:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin1 -d new_db"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    volumes:
+      - ./logs:/var/log
+      - pgdata:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+  nginx:
+    build:
+      context: .
+      dockerfile: dockerfile-nginx
+    ports:
+      - "80:80"

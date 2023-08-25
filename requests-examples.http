@@ -123,10 +123,11 @@ GET  {{baseUrl}}/shop/
 
 # Загрузить файл магазина
 POST {{baseUrl}}/shop/upload/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyOTA0MjcxLCJpYXQiOjE2OTI5MDA2NzEsImp0aSI6IjgzODI5YTg5ZDc5MzRiYmRiZDA3YjRlNWRkYTIxZWMxIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.zq59qAdVA00Chi5722KpIyyrWibDQ-ZHnyYFX36d-4E
-Content-Type: multipart/form-data; boundary=boundary_string
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyOTczNzk1LCJpYXQiOjE2OTI5NzAxOTUsImp0aSI6IjM3YjMwMjkxYjJkMjRhZDJiNTliZDI3MmM3ZGUwN2RjIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.wSa7ocY5fKzULpY50QAHNnK4enl7s4UhJ22WooV8xhg
+Content-Type: multipart/form-data
+Content-Disposition: attachment; filename=shop.yaml
 
-@./shop1.yaml
+./shop1.yaml
 
 ###
 

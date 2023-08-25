@@ -97,8 +97,15 @@
 <details>
 <summary>api/shop/upload/</summary>
 
-Скрытый текст здесь...
+<details>
+<summary><span style="color: #00FFFF;">POST</span> /shop/upload/     - Загрузить файл на сервер</summary>  
 
+- Authorization: Bearer
+
+- Content-Type: multipart/form-data
+
+- Content-Disposition: attachment; filename=shop.yaml
+</details>
 </details>
 
 

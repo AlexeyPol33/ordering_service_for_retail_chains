@@ -13,10 +13,10 @@ from .yaml_data_dump import db_dump
 from django.core.mail import send_mail
 from django.http import HttpRequest
 from os import getenv
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 import yaml
 from django.http import HttpResponseNotAllowed,HttpResponseNotFound,HttpResponseBadRequest
 from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
-from rest_framework_yaml.parsers import YAMLParser
 from rest_framework.authentication import BasicAuthentication
 from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission,\
 isOrderOwnerPermission
@@ -91,10 +91,9 @@ class MakeShopOwner(APIView):
         pass
 
 class PartnerUpdate(APIView):
+    parser_classes = (FileUploadParser,)
 
-    parser_classes = (YAMLParser,)
-
-    def post(self,request):
+    def post(self, request, *args, **kwargs):
 
         try:
             user = request.user
@@ -111,9 +110,9 @@ class PartnerUpdate(APIView):
             return HttpResponse('Forbidden',status=403)
 
         uploaded_file = ''
-        if 'file' in request.FILES:
+        try:
             uploaded_file = request.FILES['file']
-        else:
+        except:
             return HttpResponse('file not provided',status=400)
         try:
             file_content = uploaded_file.read().decode('utf-8')
@@ -122,7 +121,7 @@ class PartnerUpdate(APIView):
             return HttpResponse(f'Error reading yaml file: {e}',status=400)
         
         try:
-            db_dump(yaml_data,None,shop=shop)
+            db_dump(yaml_data,shop=shop)
         except:
             return HttpResponse('Error writing yaml file.',status=400)
         

@@ -1,14 +1,12 @@
-from app.models import Shop, Category,Product,\
-ProductInfo,Parameter,ProductsParameters
-from django.core.management.base import BaseCommand, CommandParser
+from app.models import Shop, Category, Product, \
+    ProductInfo, Parameter
 from backend.settings import SITE_DOMAIN
-from django.http import HttpRequest
 
 
-def db_dump(data:dict,shop=None) -> Shop:
+def db_dump(data: dict, shop=None) -> Shop:
 
-    if shop == None:
-        shop,c = Shop.objects.get_or_create(name=data['shop'])
+    if shop is None:
+        shop, c = Shop.objects.get_or_create(name=data['shop'])
 
     shop.name = data['shop']
 
@@ -23,23 +21,25 @@ def db_dump(data:dict,shop=None) -> Shop:
         shop.categories.add(category)
 
     for g in data['goods']:
-        product,c = Product.objects.get_or_create(id = g['id'])
+        product, c = Product.objects.get_or_create(id=g['id'])
         product.name = g['name']
         product.categories.add(Category.objects.get(id=g['category']))
         product.save()
-        product_info,с = ProductInfo.objects.update_or_create(
-            product = product,
-            defaults={'quantity':g['quantity'],
-                      'price':g['price'],
-                      'price_rrc':g['price_rrc'],
-                      'shop':shop})
-        
+        product_info, с = ProductInfo.objects.update_or_create(
+            product=product,
+            defaults={'quantity': g['quantity'],
+                      'price': g['price'],
+                      'price_rrc': g['price_rrc'],
+                      'shop': shop})
+
         for p in g['parameters'].keys():
-            
-            parameter,c = Parameter.objects.get_or_create(
-                name = p
+
+            parameter, c = Parameter.objects.get_or_create(
+                name=p
             )
-            product_info.add_parameter(parameter=parameter,value=g['parameters'][p])
+            product_info.add_parameter(
+                parameter=parameter,
+                value=g['parameters'][p]
+                )
         product_info.save()
     return shop
-

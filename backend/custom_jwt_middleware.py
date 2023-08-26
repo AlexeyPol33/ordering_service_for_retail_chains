@@ -1,9 +1,7 @@
 import jwt
 from django.conf import settings
 from app.models import User
-from rest_framework import exceptions
-from rest_framework.response import Response
-from rest_framework.status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST
+
 
 class CustomJWTMiddleware:
     def __init__(self, get_response):
@@ -15,7 +13,11 @@ class CustomJWTMiddleware:
         if token:
             try:
                 token = token.split(' ')[1]
-                decoded_payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+                decoded_payload = jwt.decode(
+                    token,
+                    settings.SECRET_KEY,
+                    algorithms=['HS256']
+                )
                 user_id = decoded_payload['user_id']
                 user = User.objects.get(pk=user_id)
                 request.user = user
@@ -26,8 +28,7 @@ class CustomJWTMiddleware:
             except User.DoesNotExist:
                 request.auth_failed = 'No such user'
             except Exception as e:
-                request.auth_failed ='invalid authorization format'
-            
+                request.auth_failed = f'invalid authorization format: {e}'
 
         response = self.get_response(request)
         return response

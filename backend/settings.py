@@ -25,14 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = getenv('SECRET_KEY','cafawsdfaagshgh1441!4tgbcxnjzhdfZH')
+SECRET_KEY = getenv('SECRET_KEY', 'cafawsdfaagshgh1441!4tgbcxnjzhdfZH')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv('DEBUG',True)
+DEBUG = getenv('DEBUG', True)
 
-ALLOWED_HOSTS = [getenv('ALLOWED_HOSTS','*')]
+ALLOWED_HOSTS = [getenv('ALLOWED_HOSTS', '*')]
 
-SITE_DOMAIN = getenv('SITE_DOMAIN',default='127.0.0.1:8000')
+SITE_DOMAIN = getenv('SITE_DOMAIN', default='127.0.0.1:8000')
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'phonenumber_field',
     'app',
-    
-    
 ]
 
 MIDDLEWARE = [
@@ -88,12 +86,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': getenv('DB_ENGINE','django.db.backends.postgresql'),
-        'NAME': getenv('DB_NAME','default'),
-        'HOST': getenv('DB_HOST','127.0.0.1'),
-        'PORT': getenv('DB_PORT','5432'),
-        'USER': getenv('DB_USER','postgres'),
-        'PASSWORD': getenv('DB_PASSWORD','postgres'),
+        'ENGINE': getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': getenv('DB_NAME', 'default'),
+        'HOST': getenv('DB_HOST', '127.0.0.1'),
+        'PORT': getenv('DB_PORT', '5432'),
+        'USER': getenv('DB_USER', 'postgres'),
+        'PASSWORD': getenv('DB_PASSWORD', 'postgres'),
     }
 }
 
@@ -103,29 +101,32 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.\
+            password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.\
+            password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.\
+            password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.\
+            password_validation.NumericPasswordValidator',
     },
 ]
 
 AUTH_USER_MODEL = 'app.User'
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend', 
-    'django.contrib.auth.backends.RemoteUserBackend', 
+    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.RemoteUserBackend',
     'django.contrib.auth.backends.AllowAllUsersRemoteUserBackend']
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    
     'TOKEN_OBTAIN_SERIALIZER': 'app.serializers.ObtainTokenSerializer',
 
 }
@@ -154,7 +155,7 @@ STATIC_ROOT = path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES':[
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PARSER_CLASSES': [
@@ -167,9 +168,12 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100
 }
 
-EMAIL_BACKEND = getenv('EMAIL_BACKEND','django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = getenv('EMAIL_HOST','localhost')
-EMAIL_PORT = getenv('EMAIL_PORT',25)
-EMAIL_HOST_USER = getenv('EMAIL_HOST_USER','default')
-EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD','default')
-EMAIL_USE_TLS = getenv('EMAIL_USE_TLS',True)
+EMAIL_BACKEND = getenv(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend'
+    )
+EMAIL_HOST = getenv('EMAIL_HOST', 'localhost')
+EMAIL_PORT = getenv('EMAIL_PORT', 25)
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER', 'default')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD', 'default')
+EMAIL_USE_TLS = getenv('EMAIL_USE_TLS', True)

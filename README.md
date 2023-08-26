@@ -98,7 +98,7 @@
 <summary>api/shop/upload/</summary>
 
 <details>
-<summary><span style="color: #00FFFF;">POST</span> /shop/upload/     - Загрузить файл на сервер</summary>  
+<summary>[POST] /shop/upload/     - Загрузить файл на сервер</summary>  
 
 - Authorization: Bearer
 
@@ -106,6 +106,7 @@
 
 - Content-Disposition: attachment; filename=shop.yaml
 </details>
+
 </details>
 
 

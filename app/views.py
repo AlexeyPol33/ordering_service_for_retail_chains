@@ -1,41 +1,38 @@
 from rest_framework.response import Response
-from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
-from app.models import Shop,ShopsCategories,Category,Product,\
-ProductInfo,Parameter,ProductsParameters,Order,\
-OrderItem,Contact, User
-from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.sites.shortcuts import get_current_site
-from rest_framework_simplejwt.tokens import RefreshToken
+from app.models import Shop, Product, ProductInfo, \
+    Order, OrderItem, Contact, User
 from .yaml_data_dump import db_dump
 from django.core.mail import send_mail
-from django.http import HttpRequest
-from os import getenv
-from rest_framework.parsers import MultiPartParser, FileUploadParser
+from rest_framework.parsers import FileUploadParser
 import yaml
-from django.http import HttpResponseNotAllowed,HttpResponseNotFound,HttpResponseBadRequest
-from rest_framework.permissions import IsAdminUser, IsAuthenticated,AllowAny
+from django.http import HttpResponseNotFound, HttpResponseBadRequest
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.authentication import BasicAuthentication
-from app.permissions import isAccountOwnerPermission, IsShopOwnerPermission,\
-isOrderOwnerPermission
-from app.serializers import ShopSerializer,ProductSerializer,\
-ProductInfoSerializer,OrderSerializer,OrderItemSerializer,\
-ContactSerializer, UserSerializer
+from app.permissions import isAccountOwnerPermission, \
+    IsShopOwnerPermission, isOrderOwnerPermission
+from app.serializers import ShopSerializer, ProductSerializer, \
+    ProductInfoSerializer, OrderSerializer, OrderItemSerializer, \
+    ContactSerializer, UserSerializer
+
 
 def test_send_email():
     subject = 'Тест почтовой службы'
     message = 'Проверка работы почтовой службы, тестовое сообщение'
     from_email = 'your_email@example.com'
     recipient_list = ['recipient@example.com']
-    send_mail(subject, message, from_email, recipient_list,fail_silently=False)
+    send_mail(
+        subject, message, from_email,
+        recipient_list, fail_silently=False)
 
-def home (request):
+
+def home(request):
     return HttpResponse('Home page')
 
-# аутентификация и управление профилем
 
+# аутентификация и управление профилем
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -43,13 +40,16 @@ class UserViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['create']:
             permission_classes = [AllowAny]
-        elif self.action in ['update', 'partial_update','destroy','retrieve',]:
-            permission_classes = [isAccountOwnerPermission|IsAdminUser]
+        elif self.action in [
+            'update', 'partial_update',
+                'destroy', 'retrieve',]:
+            permission_classes = [isAccountOwnerPermission | IsAdminUser]
         elif self.action in ['list']:
             permission_classes = [IsAdminUser]
         else:
             return []
         return [permission() for permission in permission_classes]
+
 
 class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all()
@@ -58,37 +58,41 @@ class ContactViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['create']:
             return []
-        elif self.action in ['update', 'partial_update','destroy','retrieve',]:
-            permission_classes = [isAccountOwnerPermission|IsAdminUser]
+        elif self.action in [
+            'update', 'partial_update',
+                'destroy', 'retrieve',]:
+            permission_classes = [isAccountOwnerPermission | IsAdminUser]
         elif self.action in ['list']:
             permission_classes = [IsAdminUser]
         else:
             return []
         return [permission() for permission in permission_classes]
 
-#Управление магазином и продуктами
 
+# Управление магазином и продуктами
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
-    
+
     def get_permissions(self):
         if self.action in ['create']:
             permission_classes = [IsAdminUser]
-        elif self.action in ['update', 'partial_update','destroy']:
-            permission_classes = [IsShopOwnerPermission|IsAdminUser]
-        elif self.action in ['list','retrieve']:
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [IsShopOwnerPermission | IsAdminUser]
+        elif self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
         else:
             return []
         return [permission() for permission in permission_classes]
 
+
 class MakeShopOwner(APIView):
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAdminUser]
 
-    def patch(self,request):
+    def patch(self, request):
         pass
+
 
 class PartnerUpdate(APIView):
     parser_classes = (FileUploadParser,)
@@ -98,34 +102,35 @@ class PartnerUpdate(APIView):
         try:
             user = request.user
             if user.is_anonymous:
-                return HttpResponse('Authorization error',status=401)
-        except:
-            return HttpResponse('Authorization error',status=401)
-        
+                return HttpResponse('Authorization error', status=401)
+        except Exception:
+            return HttpResponse('Authorization error', status=401)
+
         try:
             if user.position != User.UserPositionChoices.SHOP_OWNER:
-                return HttpResponse('user is not shop owner',status=403)
+                return HttpResponse('user is not shop owner', status=403)
             shop = user.company
-        except:
-            return HttpResponse('Forbidden',status=403)
+        except Exception as e:
+            return HttpResponse(f'err: {e}', status=403)
 
         uploaded_file = ''
         try:
             uploaded_file = request.FILES['file']
-        except:
-            return HttpResponse('file not provided',status=400)
+        except KeyError:
+            return HttpResponse('file not provided', status=400)
         try:
             file_content = uploaded_file.read().decode('utf-8')
             yaml_data = yaml.safe_load(file_content)
         except yaml.YAMLError as e:
-            return HttpResponse(f'Error reading yaml file: {e}',status=400)
-        
+            return HttpResponse(f'Error reading yaml file: {e}', status=400)
+
         try:
-            db_dump(yaml_data,shop=shop)
-        except:
-            return HttpResponse('Error writing yaml file.',status=400)
-        
-        return HttpResponse('Created.',status=201)
+            db_dump(yaml_data, shop=shop)
+        except Exception as e:
+            return HttpResponse(f'Error writing yaml file: {e}', status=400)
+
+        return HttpResponse('Created.', status=201)
+
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
@@ -134,13 +139,14 @@ class ProductViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['create']:
             permission_classes = [IsShopOwnerPermission]
-        elif self.action in ['update', 'partial_update','destroy']:
-            permission_classes = [IsShopOwnerPermission|IsAdminUser]
-        elif self.action in ['list','retrieve']:
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [IsShopOwnerPermission | IsAdminUser]
+        elif self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
         else:
             return []
         return [permission() for permission in permission_classes]
+
 
 class ProductInfoViewSet(ModelViewSet):
     queryset = ProductInfo.objects.all()
@@ -150,12 +156,13 @@ class ProductInfoViewSet(ModelViewSet):
         if self.action in ['create']:
             return []
         elif self.action in ['update', 'partial_update']:
-            permission_classes = [IsShopOwnerPermission|IsAdminUser]
-        elif self.action in ['list','retrieve']:
+            permission_classes = [IsShopOwnerPermission | IsAdminUser]
+        elif self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
         else:
             return []
         return [permission() for permission in permission_classes]
+
 
 # Управление корзиной
 class OrderViewSet(ModelViewSet):
@@ -165,36 +172,42 @@ class OrderViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
-        elif self.action in ['update', 'partial_update','destroy','retrieve','list']:
-            permission_classes = [IsAdminUser|isOrderOwnerPermission]
+        elif self.action in [
+            'update', 'partial_update',
+                'destroy', 'retrieve', 'list']:
+            permission_classes = [IsAdminUser | isOrderOwnerPermission]
         else:
             return []
         return [permission() for permission in permission_classes]
+
 
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
 
-    
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
-        elif self.action in ['update', 'partial_update','destroy','retrieve','list']:
-            permission_classes = [IsAdminUser|isOrderOwnerPermission]
+        elif self.action in [
+            'update', 'partial_update',
+                'destroy', 'retrieve', 'list']:
+            permission_classes = [IsAdminUser | isOrderOwnerPermission]
         else:
             return []
         return [permission() for permission in permission_classes]
 
+
 class OrderConfirmation(APIView):
     queryset = Order.objects.all()
-    def post(self,request):
+
+    def post(self, request):
         try:
             user = request.user
             if user.is_anonymous:
                 return HttpResponseBadRequest('Authorization error')
-                
-        except:
-            return HttpResponseBadRequest('Authorization error')
+
+        except Exception as e:
+            return HttpResponseBadRequest(f'Authorization error: {e}')
         try:
             contact = Contact.objects.get(user=user)
             contact_bad_field = []
@@ -211,18 +224,19 @@ class OrderConfirmation(APIView):
             if not contact.house:
                 contact_bad_field.append('house')
             if contact_bad_field:
-                return HttpResponseBadRequest(f'To confirm the order,\
-                                               you need to fill in the following\
-                                               contact fields:{contact_bad_field}')
-        except:
-            return HttpResponseBadRequest('contact error')
+                return HttpResponseBadRequest(
+                    f'To confirm the order,\
+                    you need to fill in the following\
+                    contact fields:{contact_bad_field}')
+        except Exception as e:
+            return HttpResponseBadRequest(f'contact error:{e}')
         try:
             orders = Order.objects.filter(
                 user=user,
                 status=Order.OrderStatusChoice.NEW
                 )
-        except:
-            return HttpResponseNotFound('Orders not found')
+        except Exception as e:
+            return HttpResponseNotFound(f'Orders not found; err: {e}')
         for order in orders:
             order.status = Order.OrderStatusChoice.CONFIRMED
             order.save()

@@ -1,15 +1,8 @@
-from app.models import Shop, Category,Product,\
-ProductInfo,Parameter,Order,\
-OrderItem,Contact, User
-from django.core.management.base import BaseCommand, CommandParser
+from app.models import User
+from django.core.management.base import BaseCommand
 from app.yaml_data_dump import db_dump
 import yaml
 import os
-
-
-
-            
-
 
 
 class Command(BaseCommand):
@@ -23,7 +16,7 @@ class Command(BaseCommand):
             if not os.path.exists(path=path):
                 self.stderr.write('Файл не существует')
             if not path[len(path)-5:] == '.yaml':
-                self.stderr.write('Не верный формат файла')          
+                self.stderr.write('Не верный формат файла')
         else:
             list_files = os.listdir(path='.')
             for file in list_files:
@@ -36,12 +29,11 @@ class Command(BaseCommand):
         if options['user']:
             try:
                 user = User.objects.get(id=options['user'])
-            except:
+            except Exception:
                 self.stderr.write('Пользователь не найден')
 
-
         data = {}
-        with open(path,'r',encoding='utf-8') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             data = yaml.safe_load(f)
 
         try:
@@ -50,10 +42,11 @@ class Command(BaseCommand):
                 user.company = shop
                 user.position = User.UserPositionChoices.SHOP_OWNER
                 user.save()
-            self.stdout.write(f'Файл {path} успешно загружен в базу данных')          
-        except:
-            self.stderr.write(f'Не удалось загрузить данные из файла {path}')
-        
+            self.stdout.write(f'Файл {path} успешно загружен в базу данных')
+        except Exception as e:
+            self.stderr.write(f'Не удалось загрузить данные\
+                                из файла {path}, ошибка {e}')
+
     def add_arguments(self, parser):
         parser.add_argument(
             '-p',
@@ -65,5 +58,7 @@ class Command(BaseCommand):
             '-u',
             '--user',
             type=int,
-            help='Задает владельца магазина, нужно указать id пользователя в качестве аргумента'
+            help='Задает владельца магазина,\
+                  нужно указать id пользователя\
+                      в качестве аргумента'
         )

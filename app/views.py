@@ -169,6 +169,9 @@ class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
@@ -184,6 +187,10 @@ class OrderViewSet(ModelViewSet):
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return OrderItem.objects.filter(order__user=user)
 
     def get_permissions(self):
         if self.action == 'create':

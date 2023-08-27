@@ -406,3 +406,19 @@ class OrderItem(models.Model):
     class Meta:
         verbose_name = 'Состав заказа'
         verbose_name_plural = 'Список составов заказов'
+
+    def save(self, *args, **kwargs) -> None:
+        productinfo = ProductInfo.objects.get(product=self.product)
+        if productinfo.quantity > self.quantity:
+            print(productinfo.quantity, self.quantity,)
+            productinfo.quantity = productinfo.quantity - self.quantity
+            productinfo.save()
+        else:
+            raise 'out of stock'
+        return super(OrderItem, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        productinfo = ProductInfo.objects.get(product=self.product)
+        productinfo.quantity += self.quantity
+        productinfo.save()
+        return super(OrderItem, self).delete(*args, **kwargs)

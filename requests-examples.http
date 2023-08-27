@@ -9,9 +9,9 @@ POST {{baseUrl}}/user/
 Content-Type: application/json
 
 {
-    "username":"username2",
+    "username":"username6",
     "password":"password",
-    "email":"test3@email.com"
+    "email":"test6@email.com"
 }
 
 ###
@@ -21,27 +21,27 @@ POST {{baseUrl}}/token/
 Content-Type: application/json
 
 {
-    "email":"test3@email.com",
+    "email":"test6@email.com",
     "password":"password"
 }
 
 ###
 
 #Получить пользователя
-GET {{baseUrl}}/user/3
+GET {{baseUrl}}/user/7
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyOTAzMzk0LCJpYXQiOjE2OTI4OTk3OTQsImp0aSI6ImQxODZlNTQ3NzE0ODRlMGNhZTA0NmY3YjFlNTQ0NjdiIiwidXNlcl9pZCI6MywidXNlcm5hbWUiOiJ1c2VybmFtZTIifQ.1QJHj_kF7oIAcZD8UHvAkmSRlvOzskctgmqlGSoGgXE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU2NTc5LCJpYXQiOjE2OTMxNTI5NzksImp0aSI6ImZkZmI4ZjhmOGI5YzRmNjJhNWY4Y2E5Y2U2NGFiNWZmIiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.LC0IZ9CMfwc_F1WlhoxfO2O_JoJ1apyxl3MqnoUYRcY
 
 ###
 
 #Посмотреть контактную информацию
-GET  {{baseUrl}}/user/contact/1
+GET  {{baseUrl}}/user/contact/4
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyNTM2Nzc2LCJpYXQiOjE2OTI1MzMxNzYsImp0aSI6ImFkY2I1NDYxNzYwOTQ2ZWY5ZDc2MWU2ZDkyZjNjYWM4IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJ1c2VybmFtZSJ9.ORbFEwBLZl6tn-iBJteGzrXwWdexug7kC4dVecJ1V_4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU2NTc5LCJpYXQiOjE2OTMxNTI5NzksImp0aSI6ImZkZmI4ZjhmOGI5YzRmNjJhNWY4Y2E5Y2U2NGFiNWZmIiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.LC0IZ9CMfwc_F1WlhoxfO2O_JoJ1apyxl3MqnoUYRcY
 ###
 # Изменить контактную информацию
-PATCH {{baseUrl}}/user/contact/1/
-Authorization: Bearer 
+PATCH {{baseUrl}}/user/contact/4/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU2NTc5LCJpYXQiOjE2OTMxNTI5NzksImp0aSI6ImZkZmI4ZjhmOGI5YzRmNjJhNWY4Y2E5Y2U2NGFiNWZmIiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.LC0IZ9CMfwc_F1WlhoxfO2O_JoJ1apyxl3MqnoUYRcY
 Content-Type: application/json
 
 {
@@ -72,35 +72,35 @@ GET {{baseUrl}}/productinfo/4216292
 
 #добавить товар в корзину
 POST {{baseUrl}}/orderitem/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
 Content-Type: application/json
 
 {
     "product":"4216292",
-    "quantity":2
+    "quantity":1
 }
 
 ###
 POST {{baseUrl}}/orderitem/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
 Content-Type: application/json
 
 {
     "product":"4216313",
-    "quantity":3
+    "quantity":1
 }
 
 ###
 # Просмотр корзины
 GET {{baseUrl}}/orderitem/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
 ###
 GET {{baseUrl}}/order/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
 ###
 #Подтвердить заказ
 POST {{baseUrl}}/order/confirm/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTQ4OTMyLCJpYXQiOjE2OTMxNDUzMzIsImp0aSI6ImFjODdlMTIwNjc5NzRlYzk5YTI3ZGExMDMwMGMzOTk0IiwidXNlcl9pZCI6NiwidXNlcm5hbWUiOiJ1c2VybmFtZTUifQ.oAtA8oB42A_0HAm3nQXsJBNe462Cx2Xx97UiLYK1GcI
 
 #######
 

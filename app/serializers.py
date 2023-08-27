@@ -113,12 +113,33 @@ class ProductInfoSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+
+    total_cost = serializers.SerializerMethodField()
+
     class Meta:
         model = Order
-        fields = ['id', 'user', 'dt', 'status']
+        fields = ['id', 'user', 'dt', 'status', 'total_cost']
+
+    def get_total_cost(self, obj):
+        orders_items = OrderItem.objects.filter(order=obj).all()
+        total_cost = 0
+        for item in orders_items:
+            total_cost += ProductInfo.objects.get(
+                product=item.product).price * item.quantity
+
+        return total_cost
+
+    def delete(self, instance):
+        if instance.status == Order.OrderStatusChoice.DELIVERED:
+            raise serializers.ValidationError(
+                'You cannot delete an order that has already been delivered'
+                )
+        instance.delete()
+        return {'message': 'Order successfully canceled'}
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = OrderItem
         fields = ['id', 'order', 'product', 'quantity']
@@ -134,7 +155,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
         try:
             product = validated_data['product']
             shop = ProductInfo.objects.get(product=product).shop
-        # TODO добавить валидацию количества товара
         except Product.DoesNotExist:
             raise serializers.ValidationError('Продукт не найден.')
 
@@ -150,14 +170,24 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 status=Order.OrderStatusChoice.NEW,
                 shop=shop
                 )
-            order.save()
 
         validated_data['product'] = product
         validated_data['order'] = order
 
-        orderitem = OrderItem.objects.create(**validated_data)
-        orderitem.save()
+        try:
+            orderitem = OrderItem.objects.create(**validated_data)
+        except Exception as e:
+            raise serializers.ValidationError(f'Error: {e}')
         return orderitem
+
+    def delete(self, instance):
+
+        if instance.order.status == Order.OrderStatusChoice.DELIVERED:
+            raise serializers.ValidationError(
+                'You cannot delete an item that has already been delivered'
+                )
+        instance.delete()
+        return {'message': 'Item successfully canceled'}
 
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -205,6 +235,7 @@ class ObtainTokenSerializer(TokenObtainPairSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
+
         model = User
         fields = ['id', 'username', 'password', 'email', 'company', 'position']
         extra_kwargs = {

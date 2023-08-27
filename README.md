@@ -13,6 +13,7 @@
     - [Управление продуктами](#управление-продуктами)
     - [Управление магазином](#управление-магазином)
   - [Особые команды сервера](#особые-команды-сервера)
+  - [Docker](#docker)
 
 
 ## API Endpoints
@@ -20,78 +21,138 @@
 ### Аутентификация и управление аккаунтом
 
 <details>
-<summary>api/user/</summary>
-
-Скрытый текст здесь...
-
+<summary> api/user/</summary>
+  <details>
+  <summary>[GET] api/user/(id) - Просмотр профиля</summary>
+  Скрытый текст
+  </details>
+  <details>
+  <summary>[POST] api/user/ - Регистрация нового пользователя</summary>
+  Скрытый текст
+  </details>
+  <details>
+  <summary>[PATCH] api/user/(id) - Обновление учетных данных </summary>
+  Скрытый текст
+  </details>
+  <details>
+  <summary> [DELETE] api/user/(id) - Удаление учетной записи </summary>
+  </details>
 </details>
 
 <details>
 <summary>api/user/contact/</summary>
-
-Скрытый текст здесь...
+  <details>
+  <summary>[GET] api/user/contact/(id) - Посмотреть контактную информацию</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[PATCH] api/user/contact/(id) - Обновить контактную информацию</summary>
+  TEXT
+  </details>
 
 </details>
 
 <details>
 <summary>api/token/</summary>
-
-Скрытый текст здесь...
-
+  <details>
+  <summary>[POST] api/token/ -Получить токены </summary>
+  TEXT
+  </details>
 </details>
 
 <details>
 <summary>api/token/refresh/</summary>
-
-Скрытый текст здесь...
-
+  <details>
+  <summary>[POST] api/token/refresh/ - Обновить токен</summary>
+  TEXT
+  </details>
 </details>
 
 ### Управление корзиной и заказами
 
 <details>
 <summary>api/order/</summary>
-
-Скрытый текст здесь...
-
+  <details>
+  <summary>[GET] api/order/ - Посмотреть заказы</summary>
+  TEXT
+  </details>
 </details>
 
 <details>
 <summary>api/orderitem/</summary>
-
-Скрытый текст здесь...
-
+  <details>
+  <summary>[GET] api/orderitem/ - Посмотреть предметы заказов</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[POST] api/orderitem/ - Добавить предмет в корзину</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[PATCH] api/orderitem/ - Обновить предмет заказа</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[DELETE] api/orderitem/ - Удалить предмет из корзины</summary>
+  TEXT
+  </details>
 </details>
 
 <details>
-<summary>api/order/confirm//</summary>
-
-Скрытый текст здесь...
+<summary>api/order/confirm/</summary>
+ 
+  <details>
+  <summary>[POST] api/order/confirm/ - Подтвердить заказ</summary>
+  TEXT
+  </details>
 
 </details>
 
 ### Управление продуктами
 <details>
 <summary>api/product/</summary>
-
-Скрытый текст здесь...
-
+  <details>
+  <summary>[GET] api/product/ - Получить список продуктов</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[POST] api/product/ - Добавить продукт</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[PATCH] api/product/(id) - Изменить продукт</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[DELETE] api/product/(id) - удалить продукт</summary>
+  TEXT
+  </details>
 </details>
 
 <details>
 <summary>api/productinfo/</summary>
-
-Скрытый текст здесь...
-
+  <details>
+  <summary>[GET] api/productinfo/(id) - Получить информацию о продукте </summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[PATCH] api/productinfo/(id) - Изменить информацию о проекте</summary>
+  TEXT
+  </details>
 </details>
 
 ### Управление магазином
 
 <details>
 <summary>api/shop/</summary>
-
-Скрытый текст здесь...
-
+  <details>
+  <summary>[GET] api/shop/ - Получить список магазинов</summary>
+  TEXT
+  </details>
+  <details>
+  <summary>[PATCH] api/shop/ - Обновить информацию о магазине</summary>
+  TEXT
+  </details>
 </details>
 
 <details>
@@ -125,3 +186,7 @@
 
 </details>
 
+## Docker
+<details>
+<summary> docker-compose up --build </summary>
+</details>

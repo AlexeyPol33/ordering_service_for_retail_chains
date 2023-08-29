@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from django.core.mail import send_mail
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .tasks import send_registration_confirmation_email
 from app.models import Shop, Product, \
     ProductInfo, ProductsParameters, Order, \
     OrderItem, Contact, User
@@ -251,13 +251,7 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data['email']
         )
         user.set_password(validated_data['password'])
-        send_mail(
-            subject='Подтвердите регистрацию',
-            message='Для подтверждения регистрации перейдите по ссылке:',
-            from_email='your_email@example.com',
-            recipient_list=[user.email],
-            fail_silently=False
-            )
+        send_registration_confirmation_email.delay(user.email,'Ссылка')
         user.is_active = True
         user.save()
         contact = Contact.objects.create(user=user)

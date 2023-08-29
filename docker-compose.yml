@@ -7,7 +7,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: dockerfile-backend
+      dockerfile: Dockerfile-backend
     ports:
       - "8000:8000"
     volumes:
@@ -15,6 +15,20 @@ services:
     depends_on:
       - postgredb
       - nginx
+      - redis
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-backend 
+    command: celery -A backend.celery worker --loglevel=info
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
 
   postgredb:
     image: postgres:latest
@@ -39,6 +53,6 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: dockerfile-nginx
+      dockerfile: Dockerfile-nginx
     ports:
       - "80:80"

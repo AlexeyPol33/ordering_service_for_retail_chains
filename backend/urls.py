@@ -38,5 +38,6 @@ urlpatterns = [
         name='confirm_order'
         ),
     path('api/shop/upload/', PartnerUpdate.as_view()),
+    path('api/shop/upload/<int:number>/', PartnerUpdate.as_view()),
     path('api/', include('app.urls'))
 ]

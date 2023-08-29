@@ -4,13 +4,14 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from app.models import Shop, Product, ProductInfo, \
     Order, OrderItem, Contact, User
-from .yaml_data_dump import db_dump
+from .tasks import db_dump
 from django.core.mail import send_mail
 from rest_framework.parsers import FileUploadParser
 import yaml
 from django.http import HttpResponseNotFound, HttpResponseBadRequest
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.authentication import BasicAuthentication
+from celery.result import AsyncResult
 from app.permissions import isAccountOwnerPermission, \
     IsShopOwnerPermission, isOrderOwnerPermission
 from app.serializers import ShopSerializer, ProductSerializer, \
@@ -125,11 +126,19 @@ class PartnerUpdate(APIView):
             return HttpResponse(f'Error reading yaml file: {e}', status=400)
 
         try:
-            db_dump(yaml_data, shop=shop)
+            delay = db_dump.delay(yaml_data, shop=shop)
         except Exception as e:
             return HttpResponse(f'Error writing yaml file: {e}', status=400)
 
-        return HttpResponse('Created.', status=201)
+        return HttpResponse(f'Created. Tasks_id:{delay.id}', status=201)
+    
+    def get(self, request, task_id,*args, **kwargs):
+        try:
+            task = AsyncResult(task_id)
+        except Exception as e:
+            return HttpResponse(f'Err: {e}',status=400)
+        status = task.status
+        return HttpResponse(f'task status: {status}', status=200)
 
 
 class ProductViewSet(ModelViewSet):

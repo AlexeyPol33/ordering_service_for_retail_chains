@@ -14,3 +14,4 @@ django-phonenumber-field==7.1.0
 djangorestframework-yaml==2.0.0
 gunicorn==21.2.0
 flake8==6.1.0
+celery[redis]

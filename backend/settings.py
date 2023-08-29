@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'phonenumber_field',
+    'celery',
     'app',
 ]
 
@@ -168,12 +169,20 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100
 }
 
+
 EMAIL_BACKEND = getenv(
     'EMAIL_BACKEND',
     'django.core.mail.backends.smtp.EmailBackend'
     )
+
+
+EMAIL_ADDRESS = getenv('EMAIL_ADDRESS','default@email.com')
 EMAIL_HOST = getenv('EMAIL_HOST', 'localhost')
 EMAIL_PORT = getenv('EMAIL_PORT', 25)
 EMAIL_HOST_USER = getenv('EMAIL_HOST_USER', 'default')
 EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD', 'default')
 EMAIL_USE_TLS = getenv('EMAIL_USE_TLS', True)
+
+REDIS_HOST = getenv('REDIS_HOST', default='localhost')
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/1'

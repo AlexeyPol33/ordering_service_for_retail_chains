@@ -1,0 +1,14 @@
+[run]
+source = app
+omit =
+    app/__init__.py
+    app/admin.py
+    app/apps.py
+    app/management/*
+    app/migrations/*
+    app/permissions.py
+    app/serializers.py
+    app/tasks.py
+    app/tests.py
+    app/urls.py
+

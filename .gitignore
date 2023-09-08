@@ -5,3 +5,4 @@ Pipfile.lock
 .pytest_cache
 frontend
 docker-entrypoint-initdb.d
+.coverage

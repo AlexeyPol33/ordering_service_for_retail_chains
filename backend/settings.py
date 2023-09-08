@@ -92,7 +92,7 @@ DATABASES = {
         'HOST': getenv('DB_HOST', '127.0.0.1'),
         'PORT': getenv('DB_PORT', '5432'),
         'USER': getenv('DB_USER', 'postgres'),
-        'PASSWORD': getenv('DB_PASSWORD', 'postgres'),
+        'PASSWORD': getenv('DB_PASSWORD', 'postgres')
     }
 }
 
@@ -186,3 +186,4 @@ EMAIL_USE_TLS = getenv('EMAIL_USE_TLS', True)
 REDIS_HOST = getenv('REDIS_HOST', default='localhost')
 CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
 CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/1'
+CELERY_TASK_ALWAYS_EAGER = getenv('CELERY_TASK_ALWAYS_EAGER',False)

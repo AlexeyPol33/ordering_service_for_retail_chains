@@ -8,7 +8,7 @@ import backend.settings as settings
 from model_bakery import baker
 from django.contrib.auth.hashers import check_password
 from app.models import Shop, Category,Product,\
-ProductInfo,Parameter,ProductParameter,Order,\
+ProductInfo,Parameter,Order,\
 OrderItem,Contact, User
 
 @pytest.fixture
@@ -47,11 +47,6 @@ def parameter_factory():
         return baker.make('Parameter',**kwargs)
     return factory
 
-@pytest.fixture
-def product_parameter_factory():
-    def factory(**kwargs):
-        return baker.make('ProductParameter',**kwargs)
-    return factory
 
 @pytest.fixture
 def order_factory():
@@ -96,7 +91,7 @@ class TestShop:
                 id = i,
                 name = f'testname{i}',
                 url = f'testurl{i}',
-                filename = f'testfilename{i}'))
+                ))
         return shops
 
     def test_create_shop(self,correct_test_data):
@@ -106,23 +101,19 @@ class TestShop:
         assert shop.id == 1
         assert shop.name == 'testname1'
         assert shop.url == 'testurl1'
-        assert shop.filename == 'testfilename1'
 
     def test_update_shop(self,correct_test_data):
         shop = correct_test_data[1]
         update_data = {'name':'testname_update',
-                        'url':'testurl_update',
-                        'filename':'testfilename_update'}
+                        'url':'testurl_update'}
         
         shop.name = update_data['name']
         shop.url = update_data['url']
-        shop.filename = update_data['filename']
         shop.save()
         update_shop = Shop.objects.get(id = shop.id)
 
         assert update_shop.name == update_data['name']
         assert update_shop.url == update_data['url']
-        assert update_shop.filename == update_data['filename']
 
     def test_shop_deletion(self, correct_test_data):
         shop = correct_test_data[2]
@@ -137,32 +128,23 @@ class TestCategory:
     def correct_test_data(self,category_factory,shop_factory):
         categorys = []
         for i in range(1,4):
-            shop = shop_factory(name=f'testname{i}',
-                            url=f'testurl{i}',
-                            filename=f'testfilename{i}')
-            category = category_factory(name=f'testname{i}',
-                                        shops=[shop])
+            category = category_factory(name=f'testname{i}')
             categorys.append(category)
         return categorys
     
     def test_create_category(self,correct_test_data):
-        category = correct_test_data[0]
-        
+        category = correct_test_data[0]  
         assert category.name == 'testname1'
-        assert category.shops.all()[0].name == 'testname1'
+
 
     def test_update_category(self,correct_test_data):
         category = correct_test_data[1]
-        update_shop = correct_test_data[0].shops.first()
         update_name = 'update_name'
 
         category.name = update_name
-        category.shops.set([update_shop])
         category.save()
         update_category = Category.objects.get(id = category.id)
-
         assert update_category.name == update_name
-        assert update_category.shops.first() == update_shop
 
     def test_category_deletion(self,correct_test_data):
         category = correct_test_data[0]
@@ -178,7 +160,7 @@ class TestProduct:
         products = []
         for i in range(1,4):
             category = category_factory(name=f'cname{i}')
-            product = product_factory(name=f'pname{i}',category=category)
+            product = product_factory(name=f'pname{i}',categories=[category])
             products.append(product)
         return products
 
@@ -238,26 +220,6 @@ class TestParameter:
         pass
 
     def test_parameter_deletion(self,correct_test_data):
-        pass
-
-@pytest.mark.django_db
-class TestProductParameter:
-
-    @pytest.fixture
-    def correct_test_data(self,product_parameter_factory):
-        #products_parameters = []
-        #for i in range(1,4):
-            
-
-        pass
-
-    def test_create_product_parameter(self,correct_test_data):
-        pass
-
-    def test_update_product_parameter(self, correct_test_data):
-        pass
-
-    def test_product_parameter_deletion(self,correct_test_data):
         pass
 
 @pytest.mark.django_db

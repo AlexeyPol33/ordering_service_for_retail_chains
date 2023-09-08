@@ -410,7 +410,6 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs) -> None:
         productinfo = ProductInfo.objects.get(product=self.product)
         if productinfo.quantity > self.quantity:
-            print(productinfo.quantity, self.quantity,)
             productinfo.quantity = productinfo.quantity - self.quantity
             productinfo.save()
         else:

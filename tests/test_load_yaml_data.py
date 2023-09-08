@@ -1,6 +1,5 @@
 import pytest
-from app.models import Shop, Category,Product,\
-ProductInfo,Parameter,ProductsParameters
+from app.models import Shop, Category,Product
 from app.yaml_data_dump import db_dump
 
 @pytest.fixture

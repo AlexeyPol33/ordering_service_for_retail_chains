@@ -1,7 +1,6 @@
 import pytest
 from django.core import mail
 from model_bakery import baker
-from app.views import test_send_email
 from rest_framework.test import APIClient
 from django.contrib.auth.hashers import check_password
 from django.urls import reverse

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'phonenumber_field',
+    'social_django',
     'celery',
     'app',
 ]
@@ -122,6 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'app.User'
 
 AUTHENTICATION_BACKENDS = [
+    'social_core.backends.vk.VKOAuth2',
     'django.contrib.auth.backends.ModelBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
     'django.contrib.auth.backends.AllowAllUsersRemoteUserBackend']
@@ -131,8 +133,13 @@ SIMPLE_JWT = {
     'TOKEN_OBTAIN_SERIALIZER': 'app.serializers.ObtainTokenSerializer',
 
 }
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+#VK
+SOCIAL_AUTH_VK_OAUTH2_KEY = getenv('VK_CLIENT_ID', 'None')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = getenv('VK_CLIENT_SECRET', 'None')
+SOCIAL_AUTH_VK_APP_USER_MODE = 2
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/social/callback/'
 
 LANGUAGE_CODE = 'en-us'
 

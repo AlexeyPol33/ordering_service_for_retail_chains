@@ -77,11 +77,13 @@ class UserManager(BaseUserManager):
 
     def _create_user(self, email, password, **extra_fields):
         if not email:
-            raise ValueError('The given email must be set')
+            username = extra_fields.get('username')
+            email = username 
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        Contact.objects.create(user=user)
         return user
 
     def create_user(self, email, password=None, **extra_fields):
@@ -109,7 +111,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     objects = UserManager()
     USERNAME_FIELD = 'email'
-    email = models.EmailField(_('email addres'), unique=True)
+    email = models.EmailField(_('email addres'), unique=True,blank=True,null=True)
     company = models.ForeignKey(
         Shop,
         blank=True,
@@ -136,7 +138,7 @@ class User(AbstractUser):
     )
     is_active = models.BooleanField(
         _('active'),
-        default=False,
+        default=True,
         help_text=_(
             'Designates whether this user should be treated as active. '
             'Unselect this instead of deleting accounts. '

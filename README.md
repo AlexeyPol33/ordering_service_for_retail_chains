@@ -40,6 +40,11 @@
 </details>
 
 <details>
+<summary>/social/login/</summary>
+  /social/login/vk-oauth2/ - Для регистрации и входа через вк
+</details>
+
+<details>
 <summary>api/user/contact/</summary>
   <details>
   <summary>[GET] api/user/contact/(id) - Посмотреть контактную информацию</summary>

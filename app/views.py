@@ -12,6 +12,8 @@ from django.http import HttpResponseNotFound, HttpResponseBadRequest
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.authentication import BasicAuthentication
 from celery.result import AsyncResult
+from social_django.models import UserSocialAuth
+from rest_framework_simplejwt.tokens import RefreshToken
 from app.permissions import isAccountOwnerPermission, \
     IsShopOwnerPermission, isOrderOwnerPermission
 from app.serializers import ShopSerializer, ProductSerializer, \
@@ -19,18 +21,15 @@ from app.serializers import ShopSerializer, ProductSerializer, \
     ContactSerializer, UserSerializer
 
 
-def test_send_email():
-    subject = 'Тест почтовой службы'
-    message = 'Проверка работы почтовой службы, тестовое сообщение'
-    from_email = 'your_email@example.com'
-    recipient_list = ['recipient@example.com']
-    send_mail(
-        subject, message, from_email,
-        recipient_list, fail_silently=False)
-
-
 def home(request):
     return HttpResponse('Home page')
+
+def social_auth_callback(request):
+    user_social_auth = UserSocialAuth.objects.get(user=request.user)
+    user = request.user  
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+    return HttpResponse("access_token: {}".format(access_token))
 
 
 # аутентификация и управление профилем

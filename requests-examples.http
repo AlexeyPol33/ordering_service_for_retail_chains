@@ -11,7 +11,7 @@ Content-Type: application/json
 {
     "username":"username6",
     "password":"password",
-    "email":"test@email.com"
+    "email":"test3@email.com"
 }
 
 ###
@@ -21,16 +21,16 @@ POST {{baseUrl}}/token/
 Content-Type: application/json
 
 {
-    "email":"test6@email.com",
+    "email":"test@email.com",
     "password":"password"
 }
 
 ###
 
 #Получить пользователя
-GET {{baseUrl}}/user/7
+GET {{baseUrl}}/user/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU2NTc5LCJpYXQiOjE2OTMxNTI5NzksImp0aSI6ImZkZmI4ZjhmOGI5YzRmNjJhNWY4Y2E5Y2U2NGFiNWZmIiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.LC0IZ9CMfwc_F1WlhoxfO2O_JoJ1apyxl3MqnoUYRcY
+Authorization: Bearer 
 
 ###
 

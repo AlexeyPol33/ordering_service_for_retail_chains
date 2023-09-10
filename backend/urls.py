@@ -16,11 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from app.views import home, OrderConfirmation, PartnerUpdate
+from app.views import home, OrderConfirmation, PartnerUpdate, social_auth_callback
 from rest_framework_simplejwt.views\
     import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
+    path('social/', include('social_django.urls', namespace='social')),
+    path('social/callback/',social_auth_callback),
     path('', home),
     path('admin/', admin.site.urls),
     path(
@@ -39,5 +41,5 @@ urlpatterns = [
         ),
     path('api/shop/upload/', PartnerUpdate.as_view()),
     path('api/shop/upload/<int:number>/', PartnerUpdate.as_view()),
-    path('api/', include('app.urls'))
+    path('api/', include('app.urls')),
 ]

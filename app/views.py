@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.authentication import BasicAuthentication
 from celery.result import AsyncResult
 from social_django.models import UserSocialAuth
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework_simplejwt.tokens import RefreshToken
 from app.permissions import isAccountOwnerPermission, \
     IsShopOwnerPermission, isOrderOwnerPermission
@@ -32,6 +33,12 @@ def social_auth_callback(request):
 
 
 # аутентификация и управление профилем
+@extend_schema(tags=['User'])
+@extend_schema_view(
+    list=extend_schema(summary='Получить список пользователей'),
+    retrieve=extend_schema(summary='Получить пользователя'),
+    partial_update=extend_schema(summary='Обновить пользователя'),
+    create=extend_schema(summary='Зарегистрировать нового пользователь'),)
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -49,7 +56,11 @@ class UserViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
-
+@extend_schema(tags=['Contact'])
+@extend_schema_view(
+    retrieve=extend_schema(summary='Получить контактную информацию пользователя'),
+    partial_update= extend_schema(summary='Обновить контактную информацию пользователя'),
+)
 class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
@@ -69,6 +80,12 @@ class ContactViewSet(ModelViewSet):
 
 
 # Управление магазином и продуктами
+@extend_schema(tags=['Shop'])
+@extend_schema_view(
+    list= extend_schema(summary='Получить список магазинов'),
+    retrieve=extend_schema(summary='Получить магазин'),
+    partial_update= extend_schema(summary='Обновить магазин'),
+    create= extend_schema(summary='Создать магазин'),)
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
@@ -84,7 +101,9 @@ class ShopViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
-
+@extend_schema(tags=['Shop'])
+@extend_schema_view(
+    create= extend_schema(summary='Зделать пользователя владельцем магазина'),)
 class MakeShopOwner(APIView):
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAdminUser]
@@ -92,7 +111,10 @@ class MakeShopOwner(APIView):
     def patch(self, request):
         pass
 
-
+@extend_schema(tags=['Shop'])
+@extend_schema_view(
+    retrieve=extend_schema(summary='Получить статус загрузки файла'),
+    create= extend_schema(summary='Загрузить yaml файл'),)
 class PartnerUpdate(APIView):
     parser_classes = (FileUploadParser,)
 
@@ -139,6 +161,12 @@ class PartnerUpdate(APIView):
         return HttpResponse(f'task status: {status}', status=200)
 
 
+@extend_schema(tags=['Product'])
+@extend_schema_view(
+    list=extend_schema(summary='Получить список продуктов'),
+    retrieve=extend_schema(summary='Получить продукт'),
+    partial_update=extend_schema(summary='Обновить продукт'),
+    create=extend_schema(summary='Создать продукт'),)
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -154,7 +182,12 @@ class ProductViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
-
+@extend_schema(tags=['Product'])
+@extend_schema_view(
+    list= extend_schema(summary='Получить развернутый список продуктов'),
+    retrieve=extend_schema(summary='Получить информацию о продукте'),
+    partial_update= extend_schema(summary='Обновить информацию о продукте'),
+    )
 class ProductInfoViewSet(ModelViewSet):
     queryset = ProductInfo.objects.all()
     serializer_class = ProductInfoSerializer
@@ -172,6 +205,12 @@ class ProductInfoViewSet(ModelViewSet):
 
 
 # Управление корзиной
+@extend_schema(tags=['Order'])
+@extend_schema_view(
+    list= extend_schema(summary='Получить список заказов'),
+    retrieve=extend_schema(summary='Получить заказ'),
+    partial_update= extend_schema(summary='Обновить заказ'),
+    create= extend_schema(summary='Создать заказ'),)
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -190,7 +229,11 @@ class OrderViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
-
+@extend_schema(tags=['Order'])
+@extend_schema_view(
+    retrieve=extend_schema(summary='Получить содержимое заказа'),
+    partial_update= extend_schema(summary='Изменить содержимое заказа'),
+    create= extend_schema(summary='Добавить товар в заказ'),)
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
@@ -210,7 +253,9 @@ class OrderItemViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
-
+@extend_schema(tags=['Order'])
+@extend_schema_view(
+    create= extend_schema(summary='Подтвердить заказ'),)
 class OrderConfirmation(APIView):
     queryset = Order.objects.all()
 

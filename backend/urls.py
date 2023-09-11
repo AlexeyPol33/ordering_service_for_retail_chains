@@ -14,14 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import include, path
 from app.views import home, OrderConfirmation, PartnerUpdate, social_auth_callback
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework_simplejwt.views\
     import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-    path('social/', include('social_django.urls', namespace='social')),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema' ),
+    path('api/schema/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('social/token/',social_auth_callback),
     path('', home),
     path('admin/', admin.site.urls),
@@ -41,5 +45,6 @@ urlpatterns = [
         ),
     path('api/shop/upload/', PartnerUpdate.as_view()),
     path('api/shop/upload/<int:number>/', PartnerUpdate.as_view()),
+    path('social/', include('social_django.urls', namespace='social')),
     path('api/', include('app.urls')),
 ]

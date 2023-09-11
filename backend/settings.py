@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'phonenumber_field',
+    'drf_spectacular',
     'social_django',
     'celery',
     'app',
@@ -169,6 +170,7 @@ STATIC_ROOT = path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
@@ -200,3 +202,13 @@ REDIS_HOST = getenv('REDIS_HOST', default='localhost')
 CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
 CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/1'
 CELERY_TASK_ALWAYS_EAGER = getenv('CELERY_TASK_ALWAYS_EAGER',False)
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Ordering service for retail chains",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "filter": True,
+    },
+    "COMPONENT_SPLIT_REQUEST": True
+}

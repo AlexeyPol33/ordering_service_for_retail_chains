@@ -41,7 +41,9 @@
 
 <details>
 <summary>/social/login/</summary>
-  /social/login/vk-oauth2/ - Для регистрации и входа через вк
+
+  - /social/login/vk-oauth2/ - Для регистрации и входа через вк
+  - /social/login/google-oauth2/ - Для регистрации и входа через Google
 </details>
 
 <details>

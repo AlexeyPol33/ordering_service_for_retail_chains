@@ -123,6 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'app.User'
 
 AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.vk.VKOAuth2',
     'django.contrib.auth.backends.ModelBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
@@ -133,13 +134,18 @@ SIMPLE_JWT = {
     'TOKEN_OBTAIN_SERIALIZER': 'app.serializers.ObtainTokenSerializer',
 
 }
-
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/social/token/'
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
+
 #VK
 SOCIAL_AUTH_VK_OAUTH2_KEY = getenv('VK_CLIENT_ID', 'None')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = getenv('VK_CLIENT_SECRET', 'None')
 SOCIAL_AUTH_VK_APP_USER_MODE = 2
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/social/callback/'
+
+#google
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = getenv('GOOGLE_CLIENT_ID', 'None')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = getenv('GOOGLE_CLIENT_SECRET', 'None')
+
 
 LANGUAGE_CODE = 'en-us'
 

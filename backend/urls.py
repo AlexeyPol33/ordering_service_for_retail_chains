@@ -22,7 +22,7 @@ from rest_framework_simplejwt.views\
 
 urlpatterns = [
     path('social/', include('social_django.urls', namespace='social')),
-    path('social/callback/',social_auth_callback),
+    path('social/token/',social_auth_callback),
     path('', home),
     path('admin/', admin.site.urls),
     path(

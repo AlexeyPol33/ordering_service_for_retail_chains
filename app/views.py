@@ -25,7 +25,6 @@ def home(request):
     return HttpResponse('Home page')
 
 def social_auth_callback(request):
-    user_social_auth = UserSocialAuth.objects.get(user=request.user)
     user = request.user  
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)

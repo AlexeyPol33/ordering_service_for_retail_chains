@@ -182,6 +182,7 @@ class ProductViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
+
 @extend_schema(tags=['Product'])
 @extend_schema_view(
     list= extend_schema(summary='Получить развернутый список продуктов'),

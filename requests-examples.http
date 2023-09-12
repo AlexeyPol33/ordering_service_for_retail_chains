@@ -37,11 +37,11 @@ Authorization: Bearer
 #Посмотреть контактную информацию
 GET  {{baseUrl}}/user/contact/4
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU2NTc5LCJpYXQiOjE2OTMxNTI5NzksImp0aSI6ImZkZmI4ZjhmOGI5YzRmNjJhNWY4Y2E5Y2U2NGFiNWZmIiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.LC0IZ9CMfwc_F1WlhoxfO2O_JoJ1apyxl3MqnoUYRcY
+Authorization: Bearer
 ###
 # Изменить контактную информацию
 PATCH {{baseUrl}}/user/contact/4/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU2NTc5LCJpYXQiOjE2OTMxNTI5NzksImp0aSI6ImZkZmI4ZjhmOGI5YzRmNjJhNWY4Y2E5Y2U2NGFiNWZmIiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.LC0IZ9CMfwc_F1WlhoxfO2O_JoJ1apyxl3MqnoUYRcY
+Authorization: Bearer
 Content-Type: application/json
 
 {
@@ -72,7 +72,7 @@ GET {{baseUrl}}/productinfo/4216292
 
 #добавить товар в корзину
 POST {{baseUrl}}/orderitem/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
+Authorization: Bearer
 Content-Type: application/json
 
 {
@@ -82,8 +82,7 @@ Content-Type: application/json
 
 ###
 POST {{baseUrl}}/orderitem/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
-Content-Type: application/json
+Authorization: Bearer 
 
 {
     "product":"4216313",
@@ -93,14 +92,14 @@ Content-Type: application/json
 ###
 # Просмотр корзины
 GET {{baseUrl}}/orderitem/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
+Authorization: Bearer 
 ###
 GET {{baseUrl}}/order/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTU3NTcyLCJpYXQiOjE2OTMxNTM5NzIsImp0aSI6ImVlYzllMWM2MDE4NDQ2MjE4YzgzZjMyYmI3ZGQ3NWY1IiwidXNlcl9pZCI6NywidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.EtMihjHJ2s_kWUrHBcXW2P8OxSqhIB6ZDKxtcsU3DV8
+Authorization: Bearer 
 ###
 #Подтвердить заказ
 POST {{baseUrl}}/order/confirm/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMTQ4OTMyLCJpYXQiOjE2OTMxNDUzMzIsImp0aSI6ImFjODdlMTIwNjc5NzRlYzk5YTI3ZGExMDMwMGMzOTk0IiwidXNlcl9pZCI6NiwidXNlcm5hbWUiOiJ1c2VybmFtZTUifQ.oAtA8oB42A_0HAm3nQXsJBNe462Cx2Xx97UiLYK1GcI
+Authorization: Bearer 
 
 #######
 
@@ -123,7 +122,7 @@ GET  {{baseUrl}}/shop/
 
 # Загрузить файл магазина
 POST {{baseUrl}}/shop/upload/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyOTczNzk1LCJpYXQiOjE2OTI5NzAxOTUsImp0aSI6IjM3YjMwMjkxYjJkMjRhZDJiNTliZDI3MmM3ZGUwN2RjIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.wSa7ocY5fKzULpY50QAHNnK4enl7s4UhJ22WooV8xhg
+Authorization: Bearer 
 Content-Type: multipart/form-data
 Content-Disposition: attachment; filename=shop.yaml
 
@@ -133,7 +132,7 @@ Content-Disposition: attachment; filename=shop.yaml
 
 #Обновление магазина
 PATCH {{baseUrl}}/shop/1/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODAwNTA1LCJpYXQiOjE2OTI3OTY5MDUsImp0aSI6Ijg2OGM0MjYxY2RkZDRmNmJiNjQ4MzJkMjJiMmUxNTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.j7ay0PInWxLS2jLZ3zmlxlwDyorufjIoV-lrhLSVgSY
+Authorization: Bearer 
 Content-Type: application/json
 
 {
@@ -145,7 +144,7 @@ Content-Type: application/json
 ###
 # Если категории отправить списком, то предыдущий список категорий заменяется новым
 PATCH {{baseUrl}}/shop/1/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODAwNTA1LCJpYXQiOjE2OTI3OTY5MDUsImp0aSI6Ijg2OGM0MjYxY2RkZDRmNmJiNjQ4MzJkMjJiMmUxNTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.j7ay0PInWxLS2jLZ3zmlxlwDyorufjIoV-lrhLSVgSY
+Authorization: Bearer 
 Content-Type: application/json
 
 {
@@ -155,7 +154,7 @@ Content-Type: application/json
 ###
 # Если строкой, то содержание строки добавляется к уже установленным категориям
 PATCH {{baseUrl}}/shop/1/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODAwNTA1LCJpYXQiOjE2OTI3OTY5MDUsImp0aSI6Ijg2OGM0MjYxY2RkZDRmNmJiNjQ4MzJkMjJiMmUxNTQ3IiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.j7ay0PInWxLS2jLZ3zmlxlwDyorufjIoV-lrhLSVgSY
+Authorization: Bearer 
 Content-Type: application/json
 
 {
@@ -177,7 +176,7 @@ Content-Type: application/json
 ###
 # Создать продукт
 POST {{baseUrl}}/product/
-Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODA0NTczLCJpYXQiOjE2OTI4MDA5NzMsImp0aSI6ImU2MjBmZDZlNzEwMDQ5YTU4YmRjMGU3YmRhNTlhMTkzIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.__ABkCHds25S3OXyH4KthkgzDgXOY9m-zAZ5IQ946bk
+Authorization:  Bearer 
 Content-Type: application/json
 
 {
@@ -187,7 +186,7 @@ Content-Type: application/json
 ###
 # Обновить продукт
 PATCH {{baseUrl}}/product/66/
-Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODA0NTczLCJpYXQiOjE2OTI4MDA5NzMsImp0aSI6ImU2MjBmZDZlNzEwMDQ5YTU4YmRjMGU3YmRhNTlhMTkzIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.__ABkCHds25S3OXyH4KthkgzDgXOY9m-zAZ5IQ946bk
+Authorization:  Bearer 
 Content-Type: application/json
 
 {
@@ -198,7 +197,7 @@ Content-Type: application/json
 ###
 # Обновить карточку товара
 PATCH {{baseUrl}}/productinfo/66/
-Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkyODE3NjY4LCJpYXQiOjE2OTI4MTQwNjgsImp0aSI6ImZjYjI4MGQ4ZWMyNTRhMmE4ZDgyYmFkNmJjMGRmMzliIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiIifQ.Ry-K_BonMCcnwEmZKyi7q_LxTHgLnQNdTvZubBe_7mc
+Authorization:  Bearer 
 Content-Type: application/json
 
 {

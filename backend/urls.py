@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-from app.views import home, OrderConfirmation, PartnerUpdate, social_auth_callback
+from app.views import home, OrderConfirmation, PartnerUpdate,ConfirmRegistration, social_auth_callback
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework_simplejwt.views\
     import TokenObtainPairView, TokenRefreshView
@@ -44,7 +44,9 @@ urlpatterns = [
         name='confirm_order'
         ),
     path('api/shop/upload/', PartnerUpdate.as_view()),
-    path('api/shop/upload/<int:number>/', PartnerUpdate.as_view()),
+    path('api/user/confirm/<str:task_id>/', ConfirmRegistration.as_view(), name='confirm-registration'),
+    path('api/shop/upload/<str:task_id>/', PartnerUpdate.as_view()),
+    path('silk/', include('silk.urls', namespace='silk')),
     path('social/', include('social_django.urls', namespace='social')),
     path('api/', include('app.urls')),
 ]

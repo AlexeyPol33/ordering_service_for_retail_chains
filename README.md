@@ -14,6 +14,7 @@
     - [Управление магазином](#управление-магазином)
   - [Особые команды сервера](#особые-команды-сервера)
   - [Docker](#docker)
+  - [Тесты](#тесты)
 
 
 ## API Endpoints
@@ -95,10 +96,7 @@
   <summary>[POST] api/orderitem/ - Добавить предмет в корзину</summary>
   TEXT
   </details>
-  <details>
-  <summary>[PATCH] api/orderitem/ - Обновить предмет заказа</summary>
-  TEXT
-  </details>
+
   <details>
   <summary>[DELETE] api/orderitem/ - Удалить предмет из корзины</summary>
   TEXT
@@ -197,3 +195,6 @@
 <details>
 <summary> docker-compose up --build </summary>
 </details>
+
+## Тесты
+pytest --cov=app --cov-config=.coveragerc

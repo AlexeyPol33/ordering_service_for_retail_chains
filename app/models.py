@@ -201,6 +201,11 @@ class Contact(models.Model):
         verbose_name='Описание'
         )
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.pk = self.user.pk
+        super(Contact, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Профиль'
         verbose_name_plural = 'Список профилей'

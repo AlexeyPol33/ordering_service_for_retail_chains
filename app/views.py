@@ -55,6 +55,25 @@ class UserViewSet(ModelViewSet):
         else:
             return []
         return [permission() for permission in permission_classes]
+    
+class ConfirmRegistration(APIView):
+    
+    def get(self, request, task_id, *args, **kwargs):
+        try:
+            task = AsyncResult(task_id)
+        except Exception as e:
+            return HttpResponse(f'Err: {e}',status=400)
+        if task.ready():
+            user = User.objects.get(id=task.get())
+            user.is_active = True
+            user.save()
+            RefreshToken.for_user(user)
+            return HttpResponse('Регистрация подтверждена',status=200)
+        else:
+            return HttpResponse('',status=404)
+            
+
+        
 
 @extend_schema(tags=['Contact'])
 @extend_schema_view(
@@ -146,7 +165,7 @@ class PartnerUpdate(APIView):
             return HttpResponse(f'Error reading yaml file: {e}', status=400)
 
         try:
-            delay = db_dump.delay(yaml_data, shop=shop)
+            delay = db_dump.delay(yaml_data, shop=shop.id)
         except Exception as e:
             return HttpResponse(f'Error writing yaml file: {e}', status=400)
 
@@ -247,7 +266,6 @@ class OrderItemViewSet(ModelViewSet):
         if self.action == 'create':
             permission_classes = [IsAuthenticated]
         elif self.action in [
-            'update', 'partial_update',
                 'destroy', 'retrieve', 'list']:
             permission_classes = [IsAdminUser | isOrderOwnerPermission]
         else:
@@ -300,5 +318,5 @@ class OrderConfirmation(APIView):
         for order in orders:
             order.status = Order.OrderStatusChoice.CONFIRMED
             order.save()
-        return Response('All orders have\
-                         changed their status to confirmed')
+        return HttpResponse('detail: All orders have\
+                         changed their status to confirmed', status=200)

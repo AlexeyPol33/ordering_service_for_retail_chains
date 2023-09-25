@@ -20,13 +20,15 @@ services:
   celery_worker:
     build:
       context: .
-      dockerfile: Dockerfile-backend 
+      dockerfile: Dockerfile-backend
+    mem_limit: 3g
     command: celery -A backend.celery worker --loglevel=info
     depends_on:
       - redis
 
   redis:
     image: redis
+    mem_limit: 3g
     ports:
       - "6379:6379"
 

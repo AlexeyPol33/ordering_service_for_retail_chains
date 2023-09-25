@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'drf_spectacular',
     'social_django',
+    'silk',
     'celery',
     'app',
 ]
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'backend.custom_jwt_middleware.CustomJWTMiddleware',
+    'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -179,8 +181,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES':{
-        'anon': '5/minute',
-        'user': '10/minute'
+        'anon': '50/minute',
+        'user': '100/minute'
     },
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',

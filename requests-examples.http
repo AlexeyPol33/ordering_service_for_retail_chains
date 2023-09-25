@@ -9,9 +9,9 @@ POST {{baseUrl}}/user/
 Content-Type: application/json
 
 {
-    "username":"username6",
+    "username":"username",
     "password":"password",
-    "email":"test3@email.com"
+    "email":"test@email.com"
 }
 
 ###
@@ -28,24 +28,23 @@ Content-Type: application/json
 ###
 
 #Получить пользователя
-GET {{baseUrl}}/user/
+GET {{baseUrl}}/user/6
 Content-Type: application/json
 Authorization: Bearer 
 
 ###
 
 #Посмотреть контактную информацию
-GET  {{baseUrl}}/user/contact/4
+GET  {{baseUrl}}/user/contact/6
 Content-Type: application/json
-Authorization: Bearer
+Authorization: Bearer 
 ###
 # Изменить контактную информацию
-PATCH {{baseUrl}}/user/contact/4/
-Authorization: Bearer
+PATCH {{baseUrl}}/user/contact/2/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk1NjU4NTk0LCJpYXQiOjE2OTU2NTQ5OTQsImp0aSI6ImU0NDJkMzNkZDM3MjQ0OTZiOTc0NzM3MjQyOWJlNWRhIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.VppNwVpWyt9AnptUhNnM2Ro4jZGBki0btX1n4UznAPg
 Content-Type: application/json
 
 {
-    "user":5,
     "phone": "+79991112230",
     "country": "Россия",
     "region": "Москва",
@@ -72,17 +71,18 @@ GET {{baseUrl}}/productinfo/4216292
 
 #добавить товар в корзину
 POST {{baseUrl}}/orderitem/
-Authorization: Bearer
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk1NjU4NTk0LCJpYXQiOjE2OTU2NTQ5OTQsImp0aSI6ImU0NDJkMzNkZDM3MjQ0OTZiOTc0NzM3MjQyOWJlNWRhIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.VppNwVpWyt9AnptUhNnM2Ro4jZGBki0btX1n4UznAPg
 Content-Type: application/json
 
 {
-    "product":"4216292",
+    "product":"4672670",
     "quantity":1
 }
 
 ###
 POST {{baseUrl}}/orderitem/
 Authorization: Bearer 
+Content-Type: application/json
 
 {
     "product":"4216313",
@@ -92,14 +92,14 @@ Authorization: Bearer
 ###
 # Просмотр корзины
 GET {{baseUrl}}/orderitem/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk1NjU4NTk0LCJpYXQiOjE2OTU2NTQ5OTQsImp0aSI6ImU0NDJkMzNkZDM3MjQ0OTZiOTc0NzM3MjQyOWJlNWRhIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.VppNwVpWyt9AnptUhNnM2Ro4jZGBki0btX1n4UznAPg
 ###
 GET {{baseUrl}}/order/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk1NjU4NTk0LCJpYXQiOjE2OTU2NTQ5OTQsImp0aSI6ImU0NDJkMzNkZDM3MjQ0OTZiOTc0NzM3MjQyOWJlNWRhIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.VppNwVpWyt9AnptUhNnM2Ro4jZGBki0btX1n4UznAPg
 ###
 #Подтвердить заказ
 POST {{baseUrl}}/order/confirm/
-Authorization: Bearer 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk1NjU4NTk0LCJpYXQiOjE2OTU2NTQ5OTQsImp0aSI6ImU0NDJkMzNkZDM3MjQ0OTZiOTc0NzM3MjQyOWJlNWRhIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJ1c2VybmFtZTYifQ.VppNwVpWyt9AnptUhNnM2Ro4jZGBki0btX1n4UznAPg
 
 #######
 

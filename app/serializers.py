@@ -249,14 +249,13 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create(
 
             username=validated_data['username'],
-            email=validated_data['email']
+            email=validated_data['email'],
         )
+        user.is_active = False
         user.set_password(validated_data['password'])
-        send_registration_confirmation_email.delay(user.email,'Ссылка')
-        user.is_active = True
         user.save()
-        contact = Contact.objects.create(user=user)
-        contact.save()
+        send_registration_confirmation_email.delay(user.email,user.id)
+
         return user
 
     def update(self, instance, validated_data):

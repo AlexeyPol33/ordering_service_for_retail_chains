@@ -32,23 +32,32 @@ def send_task_status_changed_email(email_address,order_id,status):
         )
 
 @shared_task
-def send_registration_confirmation_email(email_address,message):
+def send_registration_confirmation_email(email_address,user_id):
+    task_id = send_registration_confirmation_email.request.id
     send_mail(
         'Подтверждение регистрации',
-        'Для подтверждения регистрации вам необходимо перейти по ссылке:',
+        f'Для подтверждения регистрации вам необходимо перейти по ссылке: http://{SITE_DOMAIN}/api/user/confirm/{task_id}',
         EMAIL_ADDRESS,
         [email_address],
         fail_silently=False,
         )
+    return user_id
 
 @shared_task
 def db_dump(data: dict, shop=None) -> Shop:
 
+    try:
+        if len(data) == 1:
+            data = data.popitem()[1]
+    except:
+        return None
+
     if shop is None:
         shop, c = Shop.objects.get_or_create(name=data['shop'])
-
+    else:
+        shop = Shop.objects.get(id=shop)
+    
     shop.name = data['shop']
-
     shop.url = f"http://{SITE_DOMAIN}/api/shop/{shop.id}"
     shop.save()
 

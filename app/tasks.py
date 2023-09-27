@@ -5,58 +5,46 @@ from app.models import Shop, Category, Product, \
     ProductInfo, Parameter
 from backend.settings import SITE_DOMAIN
 
+
 @shared_task
-def send_thanks_for_ordering_email(email_address,order_id):
+def send_thanks_for_ordering_email(email_address, order_id):
     send_mail(
-        'Заказ принят',
+        f'Заказ №{order_id} принят',
         f'''Товары уже готовятся к отправке
         — мы пришлем уведомление в день доставки.
-        Отслеживать статус заказа в реальном 
+        Отслеживать статус заказа в реальном
         времени можно по ссылке: http://{SITE_DOMAIN}/order/{order_id}''',
         EMAIL_ADDRESS,
         [email_address],
         fail_silently=False,
         )
 
-@shared_task
-def send_task_status_changed_email(email_address,order_id,status):
-    send_mail(
-        'Заказ принят',
-        f'''Товары уже готовятся к отправке
-        — мы пришлем уведомление в день доставки.
-        Отслеживать статус заказа в реальном 
-        времени можно по ссылке: http://{SITE_DOMAIN}/order/{order_id}''',
-        EMAIL_ADDRESS,
-        [email_address],
-        fail_silently=False,
-        )
 
 @shared_task
-def send_registration_confirmation_email(email_address,user_id):
+def send_registration_confirmation_email(email_address, user_id):
     task_id = send_registration_confirmation_email.request.id
     send_mail(
         'Подтверждение регистрации',
-        f'Для подтверждения регистрации вам необходимо перейти по ссылке: http://{SITE_DOMAIN}/api/user/confirm/{task_id}',
+        f'Для подтверждения регистрации вам необходимо\
+        перейти по ссылке: http://{SITE_DOMAIN}/api/user/confirm/{task_id}',
         EMAIL_ADDRESS,
         [email_address],
         fail_silently=False,
         )
     return user_id
 
+
 @shared_task
 def db_dump(data: dict, shop=None) -> Shop:
 
-    try:
-        if len(data) == 1:
-            data = data.popitem()[1]
-    except:
-        return None
+    if len(data) == 1:
+        data = data.popitem()[1]
 
     if shop is None:
         shop, c = Shop.objects.get_or_create(name=data['shop'])
     else:
         shop = Shop.objects.get(id=shop)
-    
+
     shop.name = data['shop']
     shop.url = f"http://{SITE_DOMAIN}/api/shop/{shop.id}"
     shop.save()
@@ -90,4 +78,3 @@ def db_dump(data: dict, shop=None) -> Shop:
                 value=g['parameters'][p]
                 )
         product_info.save()
-

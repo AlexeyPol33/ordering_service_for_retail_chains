@@ -1,18 +1,14 @@
-from rest_framework.response import Response
 from django.http import HttpResponse
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from app.models import Shop, Product, ProductInfo, \
     Order, OrderItem, Contact, User
-from .tasks import db_dump
-from django.core.mail import send_mail
+from .tasks import db_dump, send_thanks_for_ordering_email
 from rest_framework.parsers import FileUploadParser
 import yaml
 from django.http import HttpResponseNotFound, HttpResponseBadRequest
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
-from rest_framework.authentication import BasicAuthentication
 from celery.result import AsyncResult
-from social_django.models import UserSocialAuth
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework_simplejwt.tokens import RefreshToken
 from app.permissions import isAccountOwnerPermission, \
@@ -25,8 +21,9 @@ from app.serializers import ShopSerializer, ProductSerializer, \
 def home(request):
     return HttpResponse('Home page')
 
+
 def social_auth_callback(request):
-    user = request.user  
+    user = request.user
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
     return HttpResponse("access_token: {}".format(access_token))
@@ -55,30 +52,31 @@ class UserViewSet(ModelViewSet):
         else:
             return []
         return [permission() for permission in permission_classes]
-    
+
+
 class ConfirmRegistration(APIView):
-    
+
     def get(self, request, task_id, *args, **kwargs):
         try:
             task = AsyncResult(task_id)
         except Exception as e:
-            return HttpResponse(f'Err: {e}',status=400)
+            return HttpResponse(f'Err: {e}', status=400)
         if task.ready():
             user = User.objects.get(id=task.get())
             user.is_active = True
             user.save()
             RefreshToken.for_user(user)
-            return HttpResponse('Регистрация подтверждена',status=200)
+            return HttpResponse('Регистрация подтверждена', status=200)
         else:
-            return HttpResponse('',status=404)
-            
+            return HttpResponse('', status=404)
 
-        
 
 @extend_schema(tags=['Contact'])
 @extend_schema_view(
-    retrieve=extend_schema(summary='Получить контактную информацию пользователя'),
-    partial_update= extend_schema(summary='Обновить контактную информацию пользователя'),
+    retrieve=extend_schema(
+        summary='Получить контактную информацию пользователя'),
+    partial_update=extend_schema(
+        summary='Обновить контактную информацию пользователя'),
 )
 class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all()
@@ -101,10 +99,10 @@ class ContactViewSet(ModelViewSet):
 # Управление магазином и продуктами
 @extend_schema(tags=['Shop'])
 @extend_schema_view(
-    list= extend_schema(summary='Получить список магазинов'),
+    list=extend_schema(summary='Получить список магазинов'),
     retrieve=extend_schema(summary='Получить магазин'),
-    partial_update= extend_schema(summary='Обновить магазин'),
-    create= extend_schema(summary='Создать магазин'),)
+    partial_update=extend_schema(summary='Обновить магазин'),
+    create=extend_schema(summary='Создать магазин'),)
 class ShopViewSet(ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
@@ -120,20 +118,11 @@ class ShopViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
-@extend_schema(tags=['Shop'])
-@extend_schema_view(
-    create= extend_schema(summary='Зделать пользователя владельцем магазина'),)
-class MakeShopOwner(APIView):
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAdminUser]
-
-    def patch(self, request):
-        pass
 
 @extend_schema(tags=['Shop'])
 @extend_schema_view(
     retrieve=extend_schema(summary='Получить статус загрузки файла'),
-    create= extend_schema(summary='Загрузить yaml файл'),)
+    create=extend_schema(summary='Загрузить yaml файл'),)
 class PartnerUpdate(APIView):
     parser_classes = (FileUploadParser,)
 
@@ -170,12 +159,12 @@ class PartnerUpdate(APIView):
             return HttpResponse(f'Error writing yaml file: {e}', status=400)
 
         return HttpResponse(f'Created. Tasks_id:{delay.id}', status=201)
-    
-    def get(self, request, task_id,*args, **kwargs):
+
+    def get(self, request, task_id, *args, **kwargs):
         try:
             task = AsyncResult(task_id)
         except Exception as e:
-            return HttpResponse(f'Err: {e}',status=400)
+            return HttpResponse(f'Err: {e}', status=400)
         status = task.status
         return HttpResponse(f'task status: {status}', status=200)
 
@@ -204,9 +193,9 @@ class ProductViewSet(ModelViewSet):
 
 @extend_schema(tags=['Product'])
 @extend_schema_view(
-    list= extend_schema(summary='Получить развернутый список продуктов'),
+    list=extend_schema(summary='Получить развернутый список продуктов'),
     retrieve=extend_schema(summary='Получить информацию о продукте'),
-    partial_update= extend_schema(summary='Обновить информацию о продукте'),
+    partial_update=extend_schema(summary='Обновить информацию о продукте'),
     )
 class ProductInfoViewSet(ModelViewSet):
     queryset = ProductInfo.objects.all()
@@ -227,10 +216,10 @@ class ProductInfoViewSet(ModelViewSet):
 # Управление корзиной
 @extend_schema(tags=['Order'])
 @extend_schema_view(
-    list= extend_schema(summary='Получить список заказов'),
+    list=extend_schema(summary='Получить список заказов'),
     retrieve=extend_schema(summary='Получить заказ'),
-    partial_update= extend_schema(summary='Обновить заказ'),
-    create= extend_schema(summary='Создать заказ'),)
+    partial_update=extend_schema(summary='Обновить заказ'),
+    create=extend_schema(summary='Создать заказ'),)
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -249,11 +238,12 @@ class OrderViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
+
 @extend_schema(tags=['Order'])
 @extend_schema_view(
     retrieve=extend_schema(summary='Получить содержимое заказа'),
-    partial_update= extend_schema(summary='Изменить содержимое заказа'),
-    create= extend_schema(summary='Добавить товар в заказ'),)
+    partial_update=extend_schema(summary='Изменить содержимое заказа'),
+    create=extend_schema(summary='Добавить товар в заказ'),)
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
@@ -272,9 +262,10 @@ class OrderItemViewSet(ModelViewSet):
             return []
         return [permission() for permission in permission_classes]
 
+
 @extend_schema(tags=['Order'])
 @extend_schema_view(
-    create= extend_schema(summary='Подтвердить заказ'),)
+    create=extend_schema(summary='Подтвердить заказ'),)
 class OrderConfirmation(APIView):
     queryset = Order.objects.all()
 
@@ -318,5 +309,6 @@ class OrderConfirmation(APIView):
         for order in orders:
             order.status = Order.OrderStatusChoice.CONFIRMED
             order.save()
+            send_thanks_for_ordering_email.delay(user.email, order.id)
         return HttpResponse('detail: All orders have\
                          changed their status to confirmed', status=200)

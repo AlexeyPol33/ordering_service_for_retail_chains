@@ -140,12 +140,12 @@ SIMPLE_JWT = {
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/social/token/'
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 
-#VK
+# VK
 SOCIAL_AUTH_VK_OAUTH2_KEY = getenv('VK_CLIENT_ID', 'None')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = getenv('VK_CLIENT_SECRET', 'None')
 SOCIAL_AUTH_VK_APP_USER_MODE = 2
 
-#google
+# google
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = getenv('GOOGLE_CLIENT_ID', 'None')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = getenv('GOOGLE_CLIENT_SECRET', 'None')
 
@@ -176,11 +176,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_THROTTLE_CLASSES':[
+    'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',
     ],
-    'DEFAULT_THROTTLE_RATES':{
+    'DEFAULT_THROTTLE_RATES': {
         'anon': '50/minute',
         'user': '100/minute'
     },
@@ -201,7 +201,7 @@ EMAIL_BACKEND = getenv(
     )
 
 
-EMAIL_ADDRESS = getenv('EMAIL_ADDRESS','default@email.com')
+EMAIL_ADDRESS = getenv('EMAIL_ADDRESS', 'default@email.com')
 EMAIL_HOST = getenv('EMAIL_HOST', 'localhost')
 EMAIL_PORT = getenv('EMAIL_PORT', 25)
 EMAIL_HOST_USER = getenv('EMAIL_HOST_USER', 'default')
@@ -211,7 +211,7 @@ EMAIL_USE_TLS = getenv('EMAIL_USE_TLS', True)
 REDIS_HOST = getenv('REDIS_HOST', default='localhost')
 CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
 CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:6379/1'
-CELERY_TASK_ALWAYS_EAGER = getenv('CELERY_TASK_ALWAYS_EAGER',False)
+CELERY_TASK_ALWAYS_EAGER = getenv('CELERY_TASK_ALWAYS_EAGER', False)
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ordering service for retail chains",

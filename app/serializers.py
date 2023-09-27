@@ -245,7 +245,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-            
+
         user = User.objects.create(
 
             username=validated_data['username'],
@@ -254,7 +254,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.is_active = False
         user.set_password(validated_data['password'])
         user.save()
-        send_registration_confirmation_email.delay(user.email,user.id)
+        send_registration_confirmation_email.delay(user.email, user.id)
 
         return user
 

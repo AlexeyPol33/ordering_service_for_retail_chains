@@ -78,7 +78,7 @@ class UserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
             username = extra_fields.get('username')
-            email = username 
+            email = username
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -111,7 +111,11 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     objects = UserManager()
     USERNAME_FIELD = 'email'
-    email = models.EmailField(_('email addres'), unique=True,blank=True,null=True)
+    email = models.EmailField(
+        _('email addres'),
+        unique=True,
+        blank=True,
+        null=True)
     company = models.ForeignKey(
         Shop,
         blank=True,

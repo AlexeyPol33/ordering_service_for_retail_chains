@@ -597,4 +597,3 @@ class TestOrderConfirmation:
         order = Order.objects.filter(user=user).first()
         assert response.status_code == 200
         assert order.status == Order.OrderStatusChoice.CONFIRMED
-
